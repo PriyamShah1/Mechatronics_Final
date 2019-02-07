@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--  This file conforms to the DTD xdc/bld/build.dtd -->
+<package name="configPkg" version="" producerId="undefined">
+    <units>
+    </units>
+    <sources>
+        <srcFile name="package/cfg/lab2_4new_pe674.c"/>
+    </sources>
+    <configscripts>
+        <srcFile name="C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/lab2_4new/SYSBIOS/lab2_4new.cfg"/>
+    </configscripts>
+    <makefiles>
+        <srcFile name="package.mak" src="package.bld"/>
+        <srcFile name="package/package.xdc.dep" src="package.xdc"/>
+        <srcFile name="package/cfg/lab2_4new_pe674.mak" src="package.bld"/>
+        <srcFile name="package/cfg/lab2_4new_pe674.oe674.dep" src="package/cfg/lab2_4new_pe674.c"/>
+        <srcFile name="package/cfg/lab2_4new_pe674.dep" src="package/cfg/lab2_4new_pe674.cfg"/>
+        <srcFile name="package/cfg/lab2_4new.xe674.mak" src="package.bld"/>
+        <srcFile name="package/rel/configPkg.tar.dep" src="package/rel/configPkg.xdc.inc"/>
+    </makefiles>
+    <targets>
+        <target name="ti.targets.elf.C674"
+            version="ti.targets.elf.C674{1,0,8.2,2"
+            rawVersion="8.2.2"
+            platform="ti.platforms.evmDA830"
+            isa="674"
+            suffix="e674"
+            rootDir="C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2"
+            os="undefined"
+            rts="ti.targets.rts6000">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="undefined"/>
+        </target>
+    </targets>
+    <libraries>
+    </libraries>
+    <configurations>
+    <configuration name="lab2_4new"
+        pname="lab2_4new.pe674"
+        target="ti.targets.elf.C674"
+        platform="ti.platforms.evmOMAPL138"
+        profile="debug"
+        isPartial="false"
+        xCfgScript="package/cfg/lab2_4new_pe674.cfg"
+        xCfgPrefix="package/cfg/lab2_4new_pe674"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/lab2_4new/SYSBIOS/lab2_4new.cfg"
+        cfgArgs="null"
+        />
+    </configurations>
+    <executables>
+    <executable name="lab2_4new"
+        pname="lab2_4new.xe674"
+        target="ti.targets.elf.C674"
+        platform="ti.platforms.evmOMAPL138"
+        profile="debug"
+        xCfgScript="package/cfg/lab2_4new_pe674.cfg"
+        xCfgPrefix="package/cfg/lab2_4new_pe674"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/lab2_4new/SYSBIOS/lab2_4new.cfg"
+        cfgArgs="null"
+        />
+    </executables>
+    <tests>
+    <test exeName="lab2_4new.xe674"
+        args=""
+        groupName="lab2_4new.xe674"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    </tests>
+    <releases relDir="package/rel/">
+    <release name="configPkg"
+        pname="configPkg.tar"
+        label="default"
+    >
+        <file name="package/package.bld.xml"/>
+        <file name="package/build.cfg"/>
+        <file name="package/package.xdc.inc"/>
+    </release>
+    </releases>
+    <repositories>
+    </repositories>
+</package>

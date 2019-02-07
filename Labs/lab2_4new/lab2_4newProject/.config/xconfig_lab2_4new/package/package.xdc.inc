@@ -1,0 +1,12 @@
+package.xdc
+package.xs
+package/xconfig_lab2_4new.sch
+package/.vers_g200
+package/.vers_r200
+package/.vers_b200
+package/.xdc-D28
+package/xconfig_lab2_4new.java
+package/xconfig_lab2_4new.class
+package/package_xconfig_lab2_4new.c
+package/package.defs.h
+package/xconfig_lab2_4new.ccs

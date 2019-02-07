@@ -1,0 +1,12 @@
+package.xdc
+package.xs
+package/xconfig_Lab1_thirdproject.sch
+package/.vers_g200
+package/.vers_r200
+package/.vers_b200
+package/.xdc-D28
+package/xconfig_Lab1_thirdproject.java
+package/xconfig_Lab1_thirdproject.class
+package/package_xconfig_Lab1_thirdproject.c
+package/package.defs.h
+package/xconfig_Lab1_thirdproject.ccs

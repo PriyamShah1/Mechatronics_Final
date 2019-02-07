@@ -1,0 +1,12 @@
+package.xdc
+package.xs
+package/xconfig_Lab1BIOS.sch
+package/.vers_g200
+package/.vers_r200
+package/.vers_b200
+package/.xdc-D28
+package/xconfig_Lab1BIOS.java
+package/xconfig_Lab1BIOS.class
+package/package_xconfig_Lab1BIOS.c
+package/package.defs.h
+package/xconfig_Lab1BIOS.ccs
