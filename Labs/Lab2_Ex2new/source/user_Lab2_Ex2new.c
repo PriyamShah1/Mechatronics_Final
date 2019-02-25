@@ -113,7 +113,6 @@ int semcount = 0;
 
 pose UpdateOptitrackStates(pose localROBOTps, int * flag);
 
-
 void LCD_screen(void){
     timer_lcd++;
     if (0==(timer_lcd%250)){

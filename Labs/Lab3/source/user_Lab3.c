@@ -285,8 +285,8 @@ void control(void) {
 
 
     if ((count%100)==0){
-        LCDPrintfLine(1,"v1: %.2f v2: %.2f",v1,v2);
-        LCDPrintfLine(2,"Enc3: %f",Enc3_rad);
+        //LCDPrintfLine(1,"v1: %.2f v2: %.2f",v1,v2);
+        //LCDPrintfLine(2,"Enc3: %f",Enc3_rad);
         GpioDataRegs.GPBTOGGLE.bit.GPIO34 = 1;
     }
 
