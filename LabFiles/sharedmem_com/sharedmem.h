@@ -35,6 +35,11 @@ DATA_TO_LINUX 					GPIO0.1
 VBDATA_FROM_LINUX				GPIO0.2 and now LVDATA_FROM_LINUX
 VBDATA_TO_LINUX					GPIO0.3 and now LVDATA_TO_LINUX
 
+*****NEW FLAGS FOR LINUX ASTAR PATH AND MAP*****
+ASTAR_COMMAND					GPIO0.4
+ASTAR_FAILED					GPIO0.5
+ASTAR_DONE						GPIO0.6
+
 currently I set GPIO0.0 to 6 as GPIO inputs first and then I set them to McBSP1 pins after linux has booted.  
 
 LINUX_BOOTED					GPIO1.14
@@ -103,6 +108,15 @@ There are more unused on GPIO4 but I don't think we will need them.
 
 #define OPTITRACKDATASIZE 3+2 // x, y, heading, trackableID, framecount
 
+#define ASTAR_COMMAND_FLAG GPIO_PIN4 // Request from OMAP138 to run astar algorithm
+#define ASTAR_COMMAND_BANK GPIO_BANK0
+ 
+#define ASTAR_FAILED_FLAG GPIO_PIN5 // astar algorithm in progress
+#define ASTAR_FAILED_BANK GPIO_BANK0
+
+#define ASTAR_DONE_FLAG GPIO_PIN6 // astar algorithm Completed
+#define ASTAR_DONE_BANK GPIO_BANK0
+
 //typedef struct sharedmemstruct {
 //	volatile int DSPRec_size;
 //	volatile char DSPRec_buf[LINUX_COMSIZE+2];  // +2 for possible extra Null char if large amounts of data sent
@@ -132,6 +146,28 @@ typedef struct sharedmemstruct {
 	volatile float Floats_from_DSP[NUM_FLOATS_TO_LINUX_FROM_DSP];
 	volatile float Optitrackdata[OPTITRACKDATASIZE];
 	volatile float scratch[500];
+	//2732
+	
+	//*****Astar Variables*****
+	volatile char sharedAstarMap[176];
+	volatile float sharedLadarDataX[228];
+	volatile float sharedLadarDataY[228];
+	volatile float sharedLadarDistance[228];
+	volatile int sharedPathRow[100];
+	volatile int sharedPathCol[100];
+	volatile int sharedPathLen;
+	volatile int sharedRobotRow;
+	volatile int sharedRobotCol;
+	volatile int sharedDestRow;
+	volatile int sharedDestCol;
+	volatile int astarTrigger;
+	volatile int newLadar;
+	//5568
+
+	// 8300 total
+	
+	// If the sharedmemstruct ever exceeds 8192, then need to multiply map size by 3.
+	
 } sharedmemstruct;
 
 
