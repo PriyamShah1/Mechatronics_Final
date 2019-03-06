@@ -93,7 +93,7 @@ void init_SPI(void){
 	SpiaRegs.SPIFFRX.bit.RXFIFORESET=1;
 
 	/* Clearing the GPIOX enables us to write instructions to the IR register. Setting the SPITXBUF
-	defines the bits in the Instruciton Register to select the CNTR register, then we clear it for all
+	defines the bits in the Instruction Register to select the CNTR register, then we clear it for all
 	4 chips, and continue this until all set of instructions are done, in this case 1. After this, we 
 	set the GPIOX pins back to 1, un-selecting them since we are done giving it instructions. At the end
 	we write the first 8 bits in the FIFO Receive buffer to our variable SPIbyte1. */
@@ -110,7 +110,7 @@ void init_SPI(void){
 	SPIbyte1 = SpiaRegs.SPIRXBUF;
 
 	/* Clearing the GPIOX enables us to write instructions to the IR register. Setting the SPITXBUF
-	defines the bits in the Instruciton Register to select the Mode Register 0, write into it for all
+	defines the bits in the Instruction Register to select the Mode Register 0, write into it for all
 	4 chips. Then inside the MDR0, we set the filter clock division to 2, disable the index, select free
 	running count mode, and declare x4 quadrature count mode. We must place a while loop to stay here
 	until all set of instructions are done, in this case 2. After this, we set the GPIOX pins back to 1, 
@@ -131,7 +131,7 @@ void init_SPI(void){
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
 
 	/* Clearing the GPIOX enables us to write instructions to the IR register. Setting the SPITXBUF
-	defines the bits in the Instruciton Register to select the Mode Register 1, write into it for all
+	defines the bits in the Instruction Register to select the Mode Register 1, write into it for all
 	4 chips. Then inside the MDR1, we do not use the flags so setting those bits to 0, then we enable
 	counting in bit 2, set counter mode to 4-byte. We must place a while loop to stay here
 	until all set of instructions are done, in this case 2. After this, we set the GPIOX pins back to 1, 
@@ -150,12 +150,11 @@ void init_SPI(void){
 	GpioDataRegs.GPASET.bit.GPIO22 = 1;
 	SPIbyte1 = SpiaRegs.SPIRXBUF;
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
-
-	//NEED MORE COMMENTS
-	SpiaRegs.SPICTL.bit.SPIINTENA = 1;
-	SpiaRegs.SPIFFRX.bit.RXFFOVFCLR = 1;
-	SpiaRegs.SPIFFRX.bit.RXFFINTCLR = 1;
-	SpiaRegs.SPIFFRX.bit.RXFFIENA = 1;
+	
+	SpiaRegs.SPICTL.bit.SPIINTENA = 1; //enable spi interrupt
+	SpiaRegs.SPIFFRX.bit.RXFFOVFCLR = 1; //SPI FIFO Receiver register: clearing overflow flag
+	SpiaRegs.SPIFFRX.bit.RXFFINTCLR = 1; //clear FIFO Interrupt flag
+	SpiaRegs.SPIFFRX.bit.RXFFIENA = 1; //enable fifo interrupt for match on RXFFIL
 
 /*********  SPI  *************************************/
 /*****************************************************/
@@ -183,12 +182,13 @@ void SPI_RXint(void) {
 			/*First we read the first byte from the receive buffer, this is random data. Then we define
 			for the interrupt flag of the receive buffer to be set after 5 bytes have been received. 
 			We also progress the state of the machine to read the data from the next GPIOX pins. 
-			Then we clear the GPIO9 bit so that we can interact with that specific chip. 
-			Then we 
+			Then we clear the GPIO9 register bit so that we can interact with that specific chip. 
+			Then we send set of instructions to the transmit buffer, select output register, then clear it. 
+			We must send bytes in order to be able to receive at the same time, so we send all 0s. 
 			*/
 			SPIbyte1 = SpiaRegs.SPIRXBUF;
-
 			SpiaRegs.SPIFFRX.bit.RXFFIL = 5;
+			//below sets up to read GPIO 09 in next state
 			SPIenc_state = 2;
 			GpioDataRegs.GPACLEAR.bit.GPIO9 = 1;
 			SpiaRegs.SPITXBUF = ((unsigned)0x68)<<8;
@@ -199,13 +199,21 @@ void SPI_RXint(void) {
 
 			break;
 		case 2:
+			/*First we read the first byte of random data from the receiver buffer, followed by the next 4 bytes.
+			The transmit buffer value is masked before saving to our variable so that we only save the LSB.
+			We must read the bytes individually since the SPI works as a FIFO register. We then concatenate all the 
+			bytes (without the random data) into our own variable for encoder 1. We set the interrupt flag for the 
+			receiver buffer to be activated after 5 bytes are received. Then progress the state to read the next encoder
+			value in the next time around. We then clear the GPIO10 register to allow us to transmit through it. 
+			Finally we send a set of instructions to clear the output register followed by 0s to fill in the remaining 4 bytes.
+			*/
 			SPIbyte1 = SpiaRegs.SPIRXBUF;
 			SPIbyte2 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte3 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte4 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte5 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIenc1_reading = (SPIbyte2<<24) | (SPIbyte3<<16) | (SPIbyte4<<8) | SPIbyte5;
-
+			//below sets up to read GPIO 10 in next state
 			SpiaRegs.SPIFFRX.bit.RXFFIL = 5;
 			SPIenc_state = 3;
 			GpioDataRegs.GPACLEAR.bit.GPIO10 = 1;
@@ -217,13 +225,15 @@ void SPI_RXint(void) {
 
 			break;
 		case 3:
+			/* Same as state 2, except dealing with GPIO pin 11
+			*/
 			SPIbyte1 = SpiaRegs.SPIRXBUF;
 			SPIbyte2 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte3 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte4 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte5 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIenc2_reading = (SPIbyte2<<24) | (SPIbyte3<<16) | (SPIbyte4<<8) | SPIbyte5;
-
+			//below sets up to read GPIO 11 in next state
 			SpiaRegs.SPIFFRX.bit.RXFFIL = 5;
 			SPIenc_state = 4;
 			GpioDataRegs.GPACLEAR.bit.GPIO11 = 1;
@@ -234,14 +244,15 @@ void SPI_RXint(void) {
 			SpiaRegs.SPITXBUF = 0;
 
 			break;
-		case 4:
+		case 4:/* Same as state 2, except dealing with GPIO pin 22
+			*/
 			SPIbyte1 = SpiaRegs.SPIRXBUF;
 			SPIbyte2 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte3 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte4 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte5 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIenc3_reading = (SPIbyte2<<24) | (SPIbyte3<<16) | (SPIbyte4<<8) | SPIbyte5;
-
+			//below sets up to read GPIO 22 in next state
 			SpiaRegs.SPIFFRX.bit.RXFFIL = 5;
 			SPIenc_state = 5;
 			GpioDataRegs.GPACLEAR.bit.GPIO22 = 1;
@@ -253,13 +264,14 @@ void SPI_RXint(void) {
 
 			break;
 		case 5:
+			//reading in values from last encoder, then posting SWI to resume previous code
 			SPIbyte1 = SpiaRegs.SPIRXBUF;
 			SPIbyte2 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte3 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte4 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIbyte5 = SpiaRegs.SPIRXBUF & 0xFF;
 			SPIenc4_reading = (SPIbyte2<<24) | (SPIbyte3<<16) | (SPIbyte4<<8) | SPIbyte5;
-
+	
 			SWI_post(&SWI_control);
 
 			break;
