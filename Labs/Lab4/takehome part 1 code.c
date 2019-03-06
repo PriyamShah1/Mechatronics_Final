@@ -52,8 +52,13 @@ void init_SPI(void){
 		GpioDataRegs.GPASET.bit.GPIO19 = 1;  // enabled
 		GpioCtrlRegs.GPADIR.bit.GPIO19 = 1;  // GPIO19 as output
 	EDIS;
-
-	//NEED MORE COMMENTS
+	
+	/*Setting SPI config control register. SWReset sets the SPI ready to receive/transmit next char.
+	Setting Pol and Phase so that data data is recorded on the rising edge, default low. 
+	Then we control the length of chars sent over SPI to 8 bits. We then configure the SPI as a master,
+	also enabling it for transmission. The SPI interrupt flag is also enabled. Finally we configure 
+	the baud rate for the SPI connection. 
+	*/
 	SpiaRegs.SPICCR.bit.SPISWRESET = 0;  // Put SPI in reset
 
 	SpiaRegs.SPICCR.bit.CLKPOLARITY = 0;  // set for LS7366
