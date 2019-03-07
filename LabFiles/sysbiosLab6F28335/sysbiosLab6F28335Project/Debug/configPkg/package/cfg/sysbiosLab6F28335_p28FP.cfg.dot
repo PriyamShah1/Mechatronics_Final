@@ -5,7 +5,7 @@ digraph configuration {
     concentrate=true;
     compound=true;
     label="\nConfiguration for configPkg/sysbiosLab6F28335.x28FP"
-  node [font=Helvetica, fontsize=14, fontcolor=black];  subgraph cluster0 {label=""; __cfg [label="C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg", color=white, fontcolor=blue];
+  node [font=Helvetica, fontsize=14, fontcolor=black];  subgraph cluster0 {label=""; __cfg [label="C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg", color=white, fontcolor=blue];
     node [font=Helvetica, fontsize=10];    subgraph cluster1 {
         label="";
         xdc_services_global__top [shape=box,label="xdc.services.global\n1,0,0,0", color=white];

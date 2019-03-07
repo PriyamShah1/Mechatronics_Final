@@ -1,6 +1,6 @@
 # FIXED
 
-i2c.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/i2c.c
+i2c.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/i2c.c
 i2c.obj: ../../include/coecsl.h
 i2c.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
 i2c.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h
@@ -167,7 +167,7 @@ i2c.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/package/Task_Sup
 i2c.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Clock.h
 i2c.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/package/Clock_TimerProxy.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/i2c.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/i2c.c: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h: 

@@ -3138,7 +3138,7 @@
         <module name="xdc.cfg.SourceDir"
                 used="true"
                 uses="">
-            <feature name="outputDir" type="string" value="C%3A%5Cdan%5Comapl138%5CSE423_Sp18%5CSp19Repo%5CLabFiles%5CsysbiosLab6F28335%5Csysbios/src"/>
+            <feature name="outputDir" type="string" value="C%3A%5Chzhou39_decamar2_ashwina2%5CSE423Repo%5CLabFiles%5CsysbiosLab6F28335%5Csysbios/src"/>
             <feature name="toBuildDir" type="string" value=".."/>
             <feature name="makefileName" type="string" value="makefile.libs"/>
             <feature name="verbose" type="number" value="2"/>
@@ -7082,7 +7082,7 @@
                 uses="">
         </module>
     </package>
-    <package name="configPkg" version="" repository="C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/">
+    <package name="configPkg" version="" repository="C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/">
     </package>
     <package name="xdc.services.io" version="1,0,0,0" repository="C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/">
         <module name="xdc.services.io.File"

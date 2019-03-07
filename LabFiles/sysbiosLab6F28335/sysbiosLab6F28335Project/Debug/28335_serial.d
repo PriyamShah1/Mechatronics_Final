@@ -1,6 +1,6 @@
 # FIXED
 
-28335_serial.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_serial.c
+28335_serial.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_serial.c
 28335_serial.obj: ../../include/coecsl.h
 28335_serial.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
 28335_serial.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h
@@ -40,7 +40,7 @@
 28335_serial.obj: ../../include/28335_pwm.h
 28335_serial.obj: ../../include/28335_eQep.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_serial.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_serial.c: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h: 

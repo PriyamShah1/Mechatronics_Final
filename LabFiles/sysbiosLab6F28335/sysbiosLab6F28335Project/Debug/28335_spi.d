@@ -1,6 +1,6 @@
 # FIXED
 
-28335_spi.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_spi.c
+28335_spi.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_spi.c
 28335_spi.obj: ../../include/coecsl.h
 28335_spi.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
 28335_spi.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h
@@ -194,7 +194,7 @@
 28335_spi.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/family/c28/Hwi.h
 28335_spi.obj: ../../include/28335_spi.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_spi.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_spi.c: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h: 

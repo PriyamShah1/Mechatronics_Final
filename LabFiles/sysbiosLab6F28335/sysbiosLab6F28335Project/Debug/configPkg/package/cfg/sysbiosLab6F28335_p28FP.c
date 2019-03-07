@@ -1550,7 +1550,7 @@ __FAR__ const xdc_SizeT ti_sysbios_knl_Task_Module_State_terminatedQ__O = offset
  *  Define absolute path prefix for this executable's
  *  configuration generated files.
  */
-xdc__META(__ASM__, "@(#)__ASM__ = C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg/package/cfg/sysbiosLab6F28335_p28FP");
+xdc__META(__ASM__, "@(#)__ASM__ = C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg/package/cfg/sysbiosLab6F28335_p28FP");
 
 /*
  *  ======== __ISA__ ========

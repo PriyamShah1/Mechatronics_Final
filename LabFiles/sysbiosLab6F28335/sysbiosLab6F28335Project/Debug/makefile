@@ -32,9 +32,9 @@ ORDERED_OBJS += \
 "./lcd.obj" \
 "./user_PIFuncs.obj" \
 "./user_sysbiosLab6F28335.obj" \
-"C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_headers/cmd/DSP2833x_Headers_BIOS.cmd" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_headers/cmd/DSP2833x_Headers_BIOS.cmd" \
 "../TMS320F28335.cmd" \
-"C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/cmd/user_lnk.cmd" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/cmd/user_lnk.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 

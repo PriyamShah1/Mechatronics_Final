@@ -11,7 +11,7 @@ var makeAssembly = false;
 var Executable = xdc.module('xdc.bld.Executable');
 
 var exeOpts = new Executable.Attrs({
-        cfgScript: 'C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg',
+        cfgScript: 'C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg',
         profile: 'release',
         cfgHome: 'configPkg',
 });
@@ -40,8 +40,8 @@ else {
 }
 
 var thisObj = {
-    cfg:        'C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg',
-    outputPath: 'C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg',
+    cfg:        'C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg',
+    outputPath: 'C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg',
     exeName:    'sysbiosLab6F28335' + suffix,
     exeIntName: 'sysbiosLab6F28335' + suffix.replace('.', '_'),
     targ:       targ,

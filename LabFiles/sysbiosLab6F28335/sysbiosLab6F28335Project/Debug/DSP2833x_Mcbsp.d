@@ -1,6 +1,6 @@
 # FIXED
 
-DSP2833x_Mcbsp.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_common/source/DSP2833x_Mcbsp.c
+DSP2833x_Mcbsp.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_common/source/DSP2833x_Mcbsp.c
 DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_headers/include/DSP2833x_Device.h
 DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_headers/include/DSP2833x_Adc.h
 DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_headers/include/DSP2833x_DevEmu.h
@@ -26,7 +26,7 @@ DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_common/include/DSP2833x_ePwm_defines.h
 DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_common/include/DSP2833x_Dma_defines.h
 DSP2833x_Mcbsp.obj: ../../v110/DSP2833x_common/include/DSP2833x_I2C_defines.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_common/source/DSP2833x_Mcbsp.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/v110/DSP2833x_common/source/DSP2833x_Mcbsp.c: 
 ../../v110/DSP2833x_headers/include/DSP2833x_Device.h: 
 ../../v110/DSP2833x_headers/include/DSP2833x_Adc.h: 
 ../../v110/DSP2833x_headers/include/DSP2833x_DevEmu.h: 

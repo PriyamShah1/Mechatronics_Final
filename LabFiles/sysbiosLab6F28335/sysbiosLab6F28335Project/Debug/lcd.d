@@ -1,6 +1,6 @@
 # FIXED
 
-lcd.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/lcd.c
+lcd.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/lcd.c
 lcd.obj: ../../include/lcd.h
 lcd.obj: ../../include/coecsl.h
 lcd.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
@@ -41,7 +41,7 @@ lcd.obj: ../../include/coecsl.h
 lcd.obj: ../../include/28335_pwm.h
 lcd.obj: ../../include/28335_eQep.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/lcd.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/lcd.c: 
 ../../include/lcd.h: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 

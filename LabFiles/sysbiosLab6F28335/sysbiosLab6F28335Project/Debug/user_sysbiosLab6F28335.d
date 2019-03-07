@@ -1,6 +1,6 @@
 # FIXED
 
-user_sysbiosLab6F28335.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/user_sysbiosLab6F28335.c
+user_sysbiosLab6F28335.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/user_sysbiosLab6F28335.c
 user_sysbiosLab6F28335.obj: ../../include/coecsl.h
 user_sysbiosLab6F28335.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
 user_sysbiosLab6F28335.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h
@@ -233,7 +233,7 @@ user_sysbiosLab6F28335.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/B
 user_sysbiosLab6F28335.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/package/BIOS_RtsGateProxy.h
 user_sysbiosLab6F28335.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/user_sysbiosLab6F28335.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/user_sysbiosLab6F28335.c: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h: 

@@ -7,7 +7,7 @@
         <srcFile name="package/cfg/sysbiosLab6F28335_p28FP.c"/>
     </sources>
     <configscripts>
-        <srcFile name="C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"/>
+        <srcFile name="C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"/>
     </configscripts>
     <makefiles>
         <srcFile name="package.mak" src="package.bld"/>
@@ -44,7 +44,7 @@
         isPartial="false"
         xCfgScript="package/cfg/sysbiosLab6F28335_p28FP.cfg"
         xCfgPrefix="package/cfg/sysbiosLab6F28335_p28FP"
-        cfgScript="C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"
         cfgArgs="null"
         />
     </configurations>
@@ -56,7 +56,7 @@
         profile="release"
         xCfgScript="package/cfg/sysbiosLab6F28335_p28FP.cfg"
         xCfgPrefix="package/cfg/sysbiosLab6F28335_p28FP"
-        cfgScript="C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbios/sysbiosLab6F28335.cfg"
         cfgArgs="null"
         />
     </executables>

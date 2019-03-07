@@ -1,6 +1,6 @@
 # FIXED
 
-user_PIFuncs.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/user_PIFuncs.c
+user_PIFuncs.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/user_PIFuncs.c
 user_PIFuncs.obj: ../../include/coecsl.h
 user_PIFuncs.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h
 user_PIFuncs.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h
@@ -40,7 +40,7 @@ user_PIFuncs.obj: ../../include/io.h
 user_PIFuncs.obj: ../../include/28335_pwm.h
 user_PIFuncs.obj: ../../include/28335_eQep.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/user_PIFuncs.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/user_PIFuncs.c: 
 ../../include/coecsl.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/stdio.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS/include/linkage.h: 

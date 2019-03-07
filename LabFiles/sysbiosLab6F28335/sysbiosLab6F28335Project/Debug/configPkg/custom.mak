@@ -7,5 +7,5 @@
 #       or equal to the generated config header
 #
 linker.cmd: package/cfg/sysbiosLab6F28335_p28FP.xdl
-	$(SED) 's"^\"\(package/cfg/sysbiosLab6F28335_p28FPcfg.cmd\)\"$""\"C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg/\1\""' package/cfg/sysbiosLab6F28335_p28FP.xdl > $@
+	$(SED) 's"^\"\(package/cfg/sysbiosLab6F28335_p28FPcfg.cmd\)\"$""\"C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/sysbiosLab6F28335Project/Debug/configPkg/\1\""' package/cfg/sysbiosLab6F28335_p28FP.xdl > $@
 	-$(SETDATE) -r:max package/cfg/sysbiosLab6F28335_p28FP.h compiler.opt compiler.opt.defs

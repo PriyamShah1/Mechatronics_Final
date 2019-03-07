@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     C:\dan\omapl138\SE423_Sp18\Sp19Repo\LabFiles\sysbiosLab6F28335\sysbios\sysbiosLab6F28335.cfg
+#     C:\hzhou39_decamar2_ashwina2\SE423Repo\LabFiles\sysbiosLab6F28335\sysbios\sysbiosLab6F28335.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,7 +14,7 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    C:\dan\omapl138\SE423_Sp18\Sp19Repo\LabFiles\sysbiosLab6F28335\sysbios\src
+#    C:\hzhou39_decamar2_ashwina2\SE423Repo\LabFiles\sysbiosLab6F28335\sysbios\src
 #
 GEN_SRC_DIR ?= ../../sysbios/src
 

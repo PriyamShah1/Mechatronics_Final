@@ -9,8 +9,8 @@
  */
 
 
--l"C:\dan\omapl138\SE423_Sp18\Sp19Repo\LabFiles\sysbiosLab6F28335\sysbiosLab6F28335Project\Debug\configPkg\package\cfg\sysbiosLab6F28335_p28FP.o28FP"
--l"C:\dan\omapl138\SE423_Sp18\Sp19Repo\LabFiles\sysbiosLab6F28335\sysbios\src\sysbios\sysbios.a28FP"
+-l"C:\hzhou39_decamar2_ashwina2\SE423Repo\LabFiles\sysbiosLab6F28335\sysbiosLab6F28335Project\Debug\configPkg\package\cfg\sysbiosLab6F28335_p28FP.o28FP"
+-l"C:\hzhou39_decamar2_ashwina2\SE423Repo\LabFiles\sysbiosLab6F28335\sysbios\src\sysbios\sysbios.a28FP"
 -l"C:\CCStudio_v8\bios_6_70_01_03\packages\ti\catalog\c2800\init\lib\Boot.a28FP"
 -l"C:\CCStudio_v8\bios_6_70_01_03\packages\ti\targets\rts2800\lib\ti.targets.rts2800.a28FP"
 -l"C:\CCStudio_v8\bios_6_70_01_03\packages\ti\targets\rts2800\lib\boot.a28FP"

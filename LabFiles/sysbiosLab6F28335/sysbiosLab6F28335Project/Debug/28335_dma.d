@@ -1,6 +1,6 @@
 # FIXED
 
-28335_dma.obj: C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_dma.c
+28335_dma.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_dma.c
 28335_dma.obj: ../../include/28335_dma.h
 28335_dma.obj: ../../v110/DSP2833x_headers/include/DSP2833x_Device.h
 28335_dma.obj: ../../v110/DSP2833x_headers/include/DSP2833x_Adc.h
@@ -23,7 +23,7 @@
 28335_dma.obj: ../../v110/DSP2833x_headers/include/DSP2833x_Xintf.h
 28335_dma.obj: ../../../mcbsp_com/mcbsp_com.h
 
-C:/dan/omapl138/SE423_Sp18/Sp19Repo/LabFiles/sysbiosLab6F28335/source/28335_dma.c: 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/sysbiosLab6F28335/source/28335_dma.c: 
 ../../include/28335_dma.h: 
 ../../v110/DSP2833x_headers/include/DSP2833x_Device.h: 
 ../../v110/DSP2833x_headers/include/DSP2833x_Adc.h: 
