@@ -13,8 +13,7 @@
 #include "astar_path.h"
 #include "omapl138_gpiofuncs.h"
 #include "pQueue.h"
-#include "../../../_shared/sharedmem_com/sharedmem.h"  //assuming project in <mystuff>/linux/projectdirectory
-
+#include "../../sharedmem_com/sharedmem.h"
 #define MAP_SIZE 4096UL
 #define MAP_MASK (MAP_SIZE - 1)
 #define DELAYTIME 100000
@@ -59,24 +58,46 @@ off_t target;
 //volatile float tempFloats[NUM_FLOATS_FROM_LINUX_TO_DSP];
 //int firsttime = 1;
 
+/***** Astar Variables *****/
+int RobotRow = 0;
+int RobotCol = 0;
+int DestRow = 0;
+int DestCol = 0;
+
 
 char map[176] = 		//16x11
-{	'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',  
-	'0', '0', '0', 'x', 'x', 'x', '0', '0', '0', '0', '0', 
-	'x', 'x', '0', 'x', '0', 'x', '0', '0', '0', '0', '0', 
-	'0', 'x', '0', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 
-	'x', 'x', '0', '0', '0', '0', '0', '0', '0', 'x', '0', 
-	'0', '0', '0', '0', '0', '0', '0', '0', '0', 'x', 'x', 
-	'0', '0', '0', '0', '0', '0', 'x', 'x', 'x', '0', '0', 
-	'0', '0', '0', '0', '0', '0', 'x', '0', 'x', '0', '0', 
-	'0', '0', 'x', 'x', 'x', '0', 'x', 'x', 'x', '0', '0', 
-	'0', '0', 'x', '0', 'x', '0', '0', '0', '0', '0', '0', 
-	'0', '0', 'x', '0', 'x', '0', '0', '0', '0', '0', '0', 
-	'x', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x',  
-	'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-	'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-	'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 
-	'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0' 	};	
+{   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'   };
+/*{   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', 'x', '0', 'x', '0',
+    'x', 'x', '0', '0', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', 'x', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', 'x', 'x', '0', '0', '0', '0', '0', '0', '0',
+    '0', 'x', '0', 'x', '0', '0', '0', '0', '0', '0', '0',
+    '0', 'x', 'x', 'x', '0', '0', '0', '0', '0', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', 'x', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'   }; */
 
 
 //global variables necessary for the algorithm
@@ -180,7 +201,7 @@ void reconstructPath(int rowEnd, int colEnd, dictElem_t nodeTrack[])
 //path planning algorithm
 //parameters rowStart, colStart, rowEnd, and colEnd must be valid locations
 //they must be both within the indices of the matrix size and must not be points where barriers ('x') exist
-void astar(int rowStart, int colStart, int rowEnd, int colEnd)
+int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 {
 	//pseudo code instruction: initialize open and closed sets
 	//initialize a dictionary to keep track of parents of nodes for easy reconstruction and for keeping track of 
@@ -218,7 +239,7 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 	nodeTrack[startIdx].parentRow = 400;	//use 400 as NULL, if 400, know reached beginning in reconstruction
 	nodeTrack[startIdx].parentCol = 400;	//no parent value = 400 since out of bounds
 	if(rowStart == rowEnd && colStart == colEnd)		//if start point is the end point, don't do anything more!!!
-		return;
+		return 2;
 	push(start, &openSet, nodeTrack, mapColSize); // put start node on the openSet
 
 	char goalFound = 'f'; //false
@@ -233,14 +254,6 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 		/*set the current distance to the current node's distance traveled from the start.*/
 		//1.  currDist is set to q's distance traveled from the Start.  Explain why this could be different from the Manhattan distance to the Start position 
 		//    This question is just asking for comments.
-		/* 
-		
-		1. The distance traveled from start may be different than the Manhattan distance if there are obstacles in the path. 
-		The manhattan distance is the distance required to move directly across one row and down one column to the target position - disregarding any obstacles in the way.
-		The distance from the start has to take into account moves made to avoid any obstructions which may be longer. 
-		
-		*/
-		
 		currDist = minDistNode.distTravelFromStart;
 		
 		(nodeTrack[(minDistNode.row*mapColSize)+minDistNode.col]).heapId = 'r';		//r for removed from any set
@@ -248,13 +261,13 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 		//2.  pop q (which is currently the minimum) off which queue? 
 		// Choose one of these two lines of code
 		// IF the Openset
-		pop(&openSet, nodeTrack, mapColSize);
+		//pop(&openSet, nodeTrack, mapColSize);
 		// IF closedSet 
 		//pop(&closedSet, nodeTrack, mapColSize);
 		
 		/*generate q's 4 neighbors*/
 		// 3.  Pass q's row and col to getNeighbors
-		int numNeighbors = getNeighbors(minDistNode.row, minDistNode.col);	//get list of neighbors
+		int numNeighbors = getNeighbors(r?, c?);	//get list of neighbors
 	
 		/*for each neighbor*/
 		int cnt = 0;
@@ -263,20 +276,6 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 			// 4. Just add comments here.  Find where the structure node_t is defined and inside commments here copy its definition for
 			// viewing reference.  
 			// All the answer for 4. will be commented.
-			
-			/*
-			
-			typedef struct node
-			{
-				int row;
-				int col;
-				int distTravelFromStart;
-				int distToGoal;
-				int totalDist;
-				int pushOrder;		//order that element was pushed onto the heap
-			} node_t;
-
-			*/
 			node_t next = neighbors[cnt];
 			
 			/*if neighbor is the goal, stop the search*/
@@ -284,42 +283,29 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 			if((next.row == rowEnd) && (next.col == colEnd))		//if neighbor is the goal, found the end, so stop the search
 			{
 				// 5.  set current neighbor's parents.  Set parentRow to q's row.  Set parentCol to q's col since q is the parent of this neighbor
-				(nodeTrack[next.row*mapColSize+next.col]).parentRow = minDistNode.row;	 //set goal node's parent position to current position
-				(nodeTrack[next.row*mapColSize+next.col]).parentCol = minDistNode.col;
+				(nodeTrack[next.row*mapColSize+next.col]).parentRow = ?;	 //set goal node's parent position to current position
+				(nodeTrack[next.row*mapColSize+next.col]).parentCol = ?;
 				goalFound = 't';
 				break;
 			}
 			
 			/*neighbor.distTravelFromStart (g) = q.distTravelFromStart + distance between neighbor and q which is always 1 when search just top left bottom right*/
 			// 6.  Set this neighbor's distance traveled from the start.  Remember you have the variable "currDist" that is the distance of q to Start
-			next.distTravelFromStart = currDist + 1;
+			next.distTravelFromStart = ?;
 			
 			/*neighbor.distToGoal (h) = distance from goal to neighbor, heuristic function	(estimated distance to goal)*/
 			// 7.  Pass the correct parameters to "heuristic" to calculate the distance this neighbor is from the goal.
 			//  Remember that we have the variables rowEnd and colEnd which are the grid coordinates of the goal 
-			next.distToGoal = heuristic(next.row, next.col, rowEnd, colEnd);
+			next.distToGoal = heuristic(?, ?, ?, ?);
 			
 			/*neighbor.totalDist (f) = neighbor.distTravelFromStart + neighbor.distToGoal
 				(total estimated distance as sum of distance traveled from start and distance to goal)*/
 			// 8.  Find f, (totalDist) for this neighbor
-			next.totalDist = next.distTravelFromStart + next.distToGoal;
+			next.totalDist = ?;
 			
 			
 			// 9.  Just comments for this question.
 			// Explain in your own words (not copying the comments below) what the next 19 lines of C code are doing
-			
-			/*
-
-			If there is a node as one of your neighbors that hasn't been checked yet(on the OPEN list) but has already been assigned an f value,
-			check to see if this f value is lower than the one you would be assigning it. If so, don't add it to the openset just yet because
-			it might need to be used in another path. 
-			
-			Every time you move to a new node, the parent node will be one of the new neighbors. 
-			This first chunk of code is saying that if a parent is a node's neighbor (it is in the CLOSED list and has already been checked),
-			and it has already been assigned a lower f value (meaning its already been traveled to), don't consider it for traveling to again
-			(don't put it in the open set). This would be retracing steps.
-			
-			*/
 			
 			/*if a node with the same position as neighbor is in the OPEN list
 				which has a lower total distance than neighbor, skip putting this neighbor onto the open set*/
@@ -355,7 +341,7 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 				//10.  push this neighbor on which queue? 
 				// Choose one of these two lines of code
 				// IF openSet
-				push(next, &openSet, nodeTrack, mapColSize);
+				//push(next, &openSet, nodeTrack, mapColSize);
 				// IF closedSet
 				//push(next, &closedSet, nodeTrack, mapColSize);
 				
@@ -369,18 +355,79 @@ void astar(int rowStart, int colStart, int rowEnd, int colEnd)
 		// IF openSet
 		//push(minDistNode, &openSet, nodeTrack, mapColSize);
 		// IF closedSet
-		push(minDistNode, &closedSet, nodeTrack, mapColSize);
+		//push(minDistNode, &closedSet, nodeTrack, mapColSize);
 		
 	}  /*end while loop*/
 
 	/*if a path was found from the start to the goal, then reconstruct the path*/
-	///////////////////????????????????Double check??????????????????????
-	if(goalFound == 't')
+	if(goalFound == 't') {
 		// 12.  Pass the correct varaibles to "reconstructPath" in order for it to fill in the global arrays pathRow, pathCol
 		//     and integer pathLen.  Note that the path is in reverse order in pathRow and pathCol.
-		///////////////////????????????????Double check??????????????????????
-		reconstructPath(rowEnd, colEnd, nodeTrack);
+		reconstructPath(?, ?, ?);
+		return 1;  // found a path return 1
+	}
+	return 0;  // Did not find a path  return zero;
 
+}
+
+int runAstar(int startRow, int startCol, int endRow, int endCol)
+{
+				int astarfoundpath = 0;
+				mapRowSize = 16;
+				mapColSize = 11;
+				
+				int i,j;
+				for(i=0; i<mapRowSize; i++)
+				{
+					for(j = 0; j<mapColSize; j++) {
+						map[i*mapColSize+j] = myshared->sharedAstarMap[i*mapColSize+j];
+						printf("%c ", map[i*mapColSize+j]);
+					}
+					printf("\n");
+				}
+				printf("\n");
+				if(startRow>=0 && startRow<mapRowSize && startCol>=0 && startCol<mapColSize && endRow>=0 && endRow<mapRowSize && endCol>=0 && endCol<mapColSize)		//if in bounds{
+				{
+					if(map[startRow*mapColSize+startCol]!='x' && map[endRow*mapColSize+endCol]!='x')		//make sure valid start and end points
+					{
+						astarfoundpath = astar(startRow,startCol,endRow,endCol);		//solve
+						if (astarfoundpath == 1) {
+							myshared->sharedPathLen = pathLen;
+							printf("pathLen %d\n", myshared->sharedPathLen);
+							for(i = 0; i < pathLen; i++)		//put solution on map
+							{
+								int mapIdx = pathRow[i]*mapColSize + pathCol[i];
+								map[mapIdx] = '-';
+								myshared->sharedPathRow[i]=pathRow[i]; //we added these lines after discussion with michal
+								myshared->sharedPathCol[i]=pathCol[i];
+								
+								printf("%d, %d; %d, %d \n", pathRow[i], pathCol[i], (11-pathRow[i]), (pathCol[i]-5) );		//Print Astar coordinates, Robot coordinates
+							}	
+						
+							//print map with solution
+							for(i=0; i<mapRowSize; i++)
+							{
+								for(j = 0; j<mapColSize; j++) {
+									printf("%c ", map[i*mapColSize+j]);
+									myshared->sharedAstarMap[i*mapColSize+j] = map[i*mapColSize+j]; //why do we need to send this info to DSP?? 
+								}
+								printf("\n");
+							}
+							return 1;
+						} else {
+							printf("\n\n\nNo Path Found\n\n\n");
+							return 0;
+						}
+						return 1;
+						
+					}
+					else
+						printf("start or stop point not a navigable point: sR%d, sC%d, eR%d, eC%d \n", startRow, startCol, endRow, endCol);
+				}
+				else
+					printf("at least one entered value not in bounds of map size: sR%d, sC%d, eR%d, eC%d \n", startRow, startCol, endRow, endCol);
+	
+	return 0;
 }
 
 
@@ -440,6 +487,10 @@ int main (int argc, char **argv)
 	GPIO_setOutput(mygpio,LVDATA_FROM_LINUX_BANK,LVDATA_FROM_LINUX_FLAG,OUTPUT_LOW);  // Clear = linux will write LV data for shared memory for DSP
 	GPIO_setOutput(mygpio,DATA_TO_LINUX_BANK,DATA_TO_LINUX_FLAG,OUTPUT_HIGH);  // Set = linux is ready for data from DSP
 	GPIO_setOutput(mygpio,DATA_FROM_LINUX_BANK,DATA_FROM_LINUX_FLAG,OUTPUT_LOW);  // Clear = linux will write data for shared memory for DSP
+	
+	GPIO_setOutput(mygpio,ASTAR_FAILED_BANK,ASTAR_FAILED_FLAG,OUTPUT_LOW); // Initially set all astar flags to 0. 
+	GPIO_setOutput(mygpio,ASTAR_COMMAND_BANK,ASTAR_COMMAND_FLAG,OUTPUT_LOW);
+	GPIO_setOutput(mygpio,ASTAR_DONE_BANK,ASTAR_DONE_FLAG,OUTPUT_LOW);
 
 
 	// stay in this while loop receiving input from the user until user exits by selecting option e or v  
@@ -450,59 +501,38 @@ int main (int argc, char **argv)
 		printf("...OK\n");
 		
 		while (!gs_exit) {
-			gs_quit = 0;
-			printf("Initializing listening connection...\n");
+		gs_quit = 0;
+		while (!gs_quit) {  // sit inside this while checking for new data from the DSP until TCPIP connection disconnected
+			sched_yield();  // allow other processes to run if necessary
 			
-			printf("...OK\n");
+				if (GPIO_getOutput(mygpio,ASTAR_COMMAND_BANK,ASTAR_COMMAND_FLAG) == 1) { // DSP Command to ASTAR?
+					GPIO_setOutput(mygpio,ASTAR_COMMAND_BANK,ASTAR_COMMAND_FLAG,OUTPUT_LOW); // Reset Astar Command Flag
+					GPIO_setOutput(mygpio,ASTAR_FAILED_BANK,ASTAR_FAILED_FLAG,OUTPUT_LOW); // Clear Failure GPIO Flag
 
-				printf("Solve 2 points in course\n");
-				printf("enter start and end points:\n");
-				printf("startRow (an integer [0:15]): ");
-				scanf("%d", &startRow);
-				printf("startCol (an integer [0:10]): ");
-				scanf("%d", &startCol);
-				printf("endRow (an integer [0:15]): ");
-				scanf("%d", &endRow);
-				printf("endCol (an integer [0:10]): ");
-				scanf("%d", &endCol);
-				mapRowSize = 16;
-				mapColSize = 11;
-				//for(i = 0; i<mapRowSize*mapColSize; i++)		//copy m1 into map for solving
-				//	map[i] = mapCourseStart[i];
-				for(i=0; i<mapRowSize; i++)
-				{
-					for(j = 0; j<mapColSize; j++)
-						printf("%c ", map[i*mapColSize+j]);
-					printf("\n");
-				}
-				printf("\n");
-				if(startRow>=0 && startRow<mapRowSize && startCol>=0 && startCol<mapColSize && endRow>=0 && endRow<mapRowSize && endCol>=0 && endCol<mapColSize)		//if in bounds{
-				{
-					if(map[startRow*mapColSize+startCol]!='x' && map[endRow*mapColSize+endCol]!='x')		//make sure valid start and end points
-					{
-						astar(startRow,startCol,endRow,endCol);		//solve
-						printf("pathLen %d\n", pathLen);
-						for(i = 0; i< pathLen; i++)		//put solution on map
-						{
-							int mapIdx = pathRow[i]*mapColSize + pathCol[i];
-							map[mapIdx] = '-';
-						}
-						//print map with solution
-						for(i=0; i<mapRowSize; i++)
-						{
-							for(j = 0; j<mapColSize; j++)
-								printf("%c ", map[i*mapColSize+j]);
-							printf("\n");
-						}	
-					}
-					else
-						printf("start or stop point not a navigable point\n");
-				}
-				else {
-					printf("at least one entered value not in bounds of map size\n");
-				}
+					printf("Got Astar Command %d \n", myshared->astarTrigger);
 				
-		}	
+					//Update start and end locations
+				
+					RobotRow = myshared->sharedRobotRow;
+					RobotCol = myshared->sharedRobotCol;
+					DestRow = myshared->sharedDestRow;
+					DestCol = myshared->sharedDestCol;
+			
+					if (runAstar(RobotRow, RobotCol, DestRow, DestCol) == 1) {
+						GPIO_setOutput(mygpio,ASTAR_DONE_BANK,ASTAR_DONE_FLAG,OUTPUT_HIGH); // Notify DSP that Astar is completed...
+						GPIO_setOutput(mygpio,ASTAR_FAILED_BANK,ASTAR_FAILED_FLAG,OUTPUT_LOW); // ... succesfully
+					}
+					else {
+						GPIO_setOutput(mygpio,ASTAR_DONE_BANK,ASTAR_DONE_FLAG,OUTPUT_HIGH); // Notify DSP that Astar is completed...
+						GPIO_setOutput(mygpio,ASTAR_FAILED_BANK,ASTAR_FAILED_FLAG,OUTPUT_HIGH); // ... but failed
+						printf("astar unsuccessful");
+					
+					}
+				
+				}
+		
+			}
+		}
 		
 		if(munmap((void*) mygpio, MAP_SIZE) == -1) {
 			printf("Memory unmap failed.\n");	

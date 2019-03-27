@@ -220,7 +220,7 @@ int main (int argc, char **argv)
     
     target = 0x80000000;
     /* Map one page for shared memory structure*/
-    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, target & ~MAP_MASK);
+    map_base = mmap(0, 3*MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, target & ~MAP_MASK);
     if(map_base == (void *) -1) {
         printf("Memory map failed.\n");
     } else {

@@ -12,7 +12,7 @@
 #include <sys/mman.h>
 #include "showMap.h"
 #include "omapl138_gpiofuncs.h"
-#include "sharedmem.h"  //assuming project in <mystuff>/linux/projectdirectory
+#include "../../sharedmem_com/sharedmem.h"
 
 //*****Astar includes*****
 
