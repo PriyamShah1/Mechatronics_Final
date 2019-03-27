@@ -83,7 +83,7 @@ float LVvalue2 = 0;
 int new_LV_data = 0;
 
 int newnavdata = 0;
-float newvref = 0;
+float newvref = 1;
 float newturn = 0;
 float new_ref_right_wall = 0;
 float new_left_turn_Start_threshold = 0;
@@ -92,6 +92,9 @@ float new_Kp_right_wall = 0;
 float new_Kp_front_wall = 0;
 float new_front_turn_velocity = 0;
 float new_turn_command_saturation = 0;
+float new_sharp_right_threshold = 0;
+float new_Kp_sharp_right = 0;
+float new_left_turn_corner_threshold = 0;
 
 float ref_right_wall = 0;
 float left_turn_Start_threshold = 0;
@@ -100,6 +103,9 @@ float Kp_right_wall = 0;
 float Kp_front_wall = 0;
 float front_turn_velocity = 0;
 float turn_command_saturation = 0;
+float sharp_right_threshold = 0;
+float Kp_sharp_right = 0;
+float left_turn_corner_threshold = 0;
 
 int wall_follow_state = 2;
 
@@ -161,6 +167,9 @@ void ComWithLinux(void) {
 				new_Kp_front_wall= ptrshrdmem->Floats_to_DSP[6];
 				new_front_turn_velocity= ptrshrdmem->Floats_to_DSP[7];
 				new_turn_command_saturation= ptrshrdmem->Floats_to_DSP[8];
+				new_sharp_right_threshold= ptrshrdmem->Floats_to_DSP[9];
+				new_Kp_sharp_right= ptrshrdmem->Floats_to_DSP[10];
+				new_left_turn_corner_threshold=ptrshrdmem->Floats_to_DSP[11];
 				newnavdata = 1;
 			}
 
@@ -387,6 +396,37 @@ int whichled = 0;
 void RobotControl(void) {
 
     count++;
+    int i=0;
+    if (newLADARdata == 1) {
+        newLADARdata = 0;
+        for (i=0;i<228;i++) {
+            LADARdistance[i] = newLADARdistance[i];
+            LADARangle[i] = newLADARangle[i];
+            LADARdataX[i] = newLADARdataX[i];
+            LADARdataY[i] = newLADARdataY[i];
+        }
+    }
+
+    int minLADARfront = LADARdistance[111];
+        for(i=112;i<116;i++) {
+            if (LADARdistance[i] < minLADARfront) {
+                minLADARfront = LADARdistance[i];
+            }
+        }
+
+        int minLADARright = LADARdistance[52];
+        for(i=53;i<56;i++) {
+            if (LADARdistance[i] < minLADARright) {
+                minLADARright = LADARdistance[i];
+            }
+        }
+
+        int minLADARbackright = LADARdistance[0];
+        for(i=1;i<6;i++) {
+            if (LADARdistance[i] < minLADARbackright) {
+                minLADARbackright = LADARdistance[i];
+            }
+        }
     switch ((int)switchstate){
     case 0: //all switches backwards print LIDAR
         if ((count%250)==0){
@@ -440,11 +480,15 @@ void RobotControl(void) {
             LCDPrintfLine(2,"g%.1f", new_turn_command_saturation);
         }
         break;
+    case 10:
+        if ((count%250) ==0){
+                   LCDPrintfLine(1,"F: %d",minLADARfront);
+                   LCDPrintfLine(2,"R: %d s: %d",minLADARright,wall_follow_state);
+               }
     }
 
 
 	int newOPTITRACKpose = 0;
-	int i = 0;
 
 	if (0==(timecount%1000)) {
 		switch(whichled) {
@@ -490,65 +534,42 @@ void RobotControl(void) {
 		new_optitrack = 0;
 	}
 		
-	if (newLADARdata == 1) {
-		newLADARdata = 0;
-		for (i=0;i<228;i++) {
-			LADARdistance[i] = newLADARdistance[i];
-			LADARangle[i] = newLADARangle[i];
-			LADARdataX[i] = newLADARdataX[i];
-			LADARdataY[i] = newLADARdataY[i];
-		}
-	}
 
-	int minLADARfront = LADARdistance[111];
-	for(i=112;i<116;i++) {
-	    if (LADARdistance[i] < minLADARfront) {
-	        minLADARfront = LADARdistance[i];
-	    }
-	}
 
-	int minLADARright = LADARdistance[52];
-	for(i=53;i<57;i++) {
-	    if (LADARdistance[i] < minLADARright) {
-	        minLADARright = LADARdistance[i];
-	    }
-	}
-
-    int minLADARbackright = LADARdistance[0];
-    for(i=1;i<6;i++) {
-        if (LADARdistance[i] < minLADARbackright) {
-            minLADARbackright = LADARdistance[i];
-        }
-    }
 
     float front_wall_error = 0;
     float right_wall_error = 0;
 
     switch(wall_follow_state){
-    case 1: //object in front
-        front_wall_error = 3000 - minLADARfront;
-        turn = Kp_front_wall*front_wall_error;
-        vref = -front_turn_velocity;
-        if(minLADARfront > left_turn_Stop_threshold){
-            wall_follow_state = 2;
-        }else if(minLADARbackright > ref_right_wall){
-            wall_follow_state = 3;
-        }
-        break;
-    case 2: //object to the right
-        right_wall_error = ref_right_wall - minLADARright;
-        turn = -Kp_right_wall*right_wall_error;
-        vref = newvref;
-        if(minLADARfront < left_turn_Start_threshold){
-            wall_follow_state = 1;
-        }else if(minLADARright < ref_right_wall){
-            wall_follow_state = 1;
-        }
-        break;
-    case 3:
+    case 1: //wall in front, keep rotating CCW
         front_wall_error = 3000 - minLADARfront;
         turn = Kp_front_wall*front_wall_error;
         vref = front_turn_velocity;
+        if( (minLADARfront > left_turn_Stop_threshold) &(minLADARright < ref_right_wall)){ //
+            wall_follow_state = 2;
+        }
+        break;
+    case 2: //wall on the right, follow, keep adjusting
+        right_wall_error = ref_right_wall - minLADARright;
+
+        //follow_wall_error = minLADARbackR-minLADARfrontR;
+
+        if (minLADARbackright > sharp_right_threshold) {
+            turn = -Kp_sharp_right*right_wall_error;
+            if((minLADARright < ref_right_wall) & (minLADARfront < left_turn_corner_threshold)){
+                wall_follow_state = 1;
+            }
+        }else{
+            turn = -Kp_right_wall*right_wall_error;
+            if(minLADARfront < left_turn_Start_threshold){
+                wall_follow_state = 1;
+            }
+        }
+
+        vref = newvref;
+
+
+        break;
     }
 
     if(fabs(turn)>turn_command_saturation){
@@ -565,6 +586,8 @@ void RobotControl(void) {
 	    Kp_front_wall = new_Kp_front_wall;
 	    front_turn_velocity = new_front_turn_velocity;
 	    turn_command_saturation = new_turn_command_saturation;
+	    sharp_right_threshold = new_sharp_right_threshold;
+	    left_turn_corner_threshold = new_left_turn_corner_threshold;
 	    newnavdata = 0;//set flag back to zero telling Task that Swi ready for next
 	}
 
