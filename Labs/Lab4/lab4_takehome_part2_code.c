@@ -32,8 +32,10 @@ long MSP_reading = 0;
 unsigned int dac1data = 0;
 unsigned int dac2data = 0;
 /*
-initialize the MCP23S08 chip depending on what parameters are passed. Poll on the RXFFST status bits
+Function: initialize the MCP23S08 chip depending on what parameters are passed. Poll on the RXFFST status bits
 to determine when the SPI transmit and receive have completed before returning from this function. 
+
+The function initialize the registers to desired values.
 */
 void Init_MCP23S08 (unsigned int IODIRvalue, unsigned int IPOLvalue, unsigned int 
 GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
@@ -230,10 +232,18 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 
 
 /*
-Only the least significant 8 bits are sent to the MCP23S08’s
+Function: Only the least significant 8 bits are sent to the MCP23S08’s
 OLAT register. Only the bits setup as outputs will be changed by writing to the OLAT register. Poll on
 the RXFFST status bits to determine when the SPI transmit and receive have completed before returning
 from this function.
+
+The function set the port latch register to desired value.
+Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+0x40 enable the write mode. After entering the writing mode, sending 0x0A selects the OLAT register. Next,
+we transmit the byte to the SPITXBUF to select desired output latches that modify the pins configured as 
+outputs. We must place a while loop to stay here until all set of instructions are done, in this case 3. After
+this, we set the GPIO19 pins back to 1, un-selecting the pin since we are done giving it instructions. At the
+end we read the 3 bytes of data from the FIFO Receive buffer to clear the buffer. 
 */
 void SetPortLatch(unsigned int byte){
 	//write 1 byte data of OLATvalue to OLAT register
@@ -255,9 +265,18 @@ void SetPortLatch(unsigned int byte){
 
 
 /*
-Read and return the 8 bit value of the GPIO register. Poll on the
+Fucntion: Read and return the 8 bit value of the GPIO register. Poll on the
 RXFFST status bits to determine when the SPI transmit and receive have completed before returning
 from this function
+
+The function read the port value by polling.
+Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+0x41 enable the read mode. After entering the reading mode, sending 0x09 selects the GPIO register. Next,
+we transmit the random data, i.e. 00, to the SPITXBUF since the chips requires 3 bytes of data every time.
+We must place a while loop to stay here until all set of instructions are done, in this case 3. After
+this, we set the GPIO19 pins back to 1, un-selecting the pin since we are done giving it instructions. At the
+end we read the 3 bytes of data from the FIFO Receive buffer, and return the 8 bit value of the GPIO register 
+stored in the last byte of received data.
 */
 unsigned int ReadPort(void){
 	//write 1 byte data of OLATvalue to OLAT register
