@@ -107,6 +107,14 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 	SpiaRegs.SPIFFTX.bit.TXFIFO=1;
 	SpiaRegs.SPIFFRX.bit.RXFIFORESET=1;
 	
+	/* Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+	0x40 enable the write mode. Note the unsigned int is left shifted 8 bit so that we only send least
+	significant 8 bits. After entering the writing mode, sending 0x00 selects the IODIR register. Next, we 
+	transmit the IODIRvalue to the SPITXBUF to select desired I/O direction. We must place a while loop to
+	stay here until all set of instructions are done, in this case 3. After this, we set the GPIO19 pins back
+	to 1, un-selecting the pin since we are done giving it instructions. At the end we read the 3 bytes of data 
+	from the FIFO Receive buffer to clear the buffer. */
+	
 	//write 1 byte data of IODIRvalue to Direction register
 	//pull chip select low for chip23S08
 	GpioDataRegs.GPACLEAR.bit.GPIO19 = 1;	
@@ -122,6 +130,14 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 	SPIbyte1 = SpiaRegs.SPIRXBUF;
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
 	SPIbyte3 = SpiaRegs.SPIRXBUF;
+	
+	/* Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+	0x40 enable the write mode. Note the unsigned int is left shifted 8 bit so that we only send least
+	significant 8 bits. After entering the writing mode, sending 0x01 selects the IPOL register. Next, we 
+	transmit the IPOLvalue to the SPITXBUF to select desired input polarity. We must place a while loop to
+	stay here until all set of instructions are done, in this case 3. After this, we set the GPIO19 pins back
+	to 1, un-selecting the pin since we are done giving it instructions. At the end we read the 3 bytes of data 
+	from the FIFO Receive buffer to clear the buffer. */
 	
 	//write 1 byte data of IPOLvalue to Polarity register
 	//pull chip select low for chip23S08
@@ -139,6 +155,14 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
 	SPIbyte3 = SpiaRegs.SPIRXBUF;
 	
+	/* Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+	0x40 enable the write mode. Note the unsigned int is left shifted 8 bit so that we only send least
+	significant 8 bits. After entering the writing mode, sending 0x06 selects the GPPU register. Next, we 
+	transmit the GPPUvalue to the SPITXBUF to select desired pull up resistor configuration. We must place a while loop to
+	stay here until all set of instructions are done, in this case 3. After this, we set the GPIO19 pins back
+	to 1, un-selecting the pin since we are done giving it instructions. At the end we read the 3 bytes of data 
+	from the FIFO Receive buffer to clear the buffer. */
+	
 	//write 1 byte data of GPPUvalue to GPPU register
 	//pull chip select low for chip23S08
 	GpioDataRegs.GPACLEAR.bit.GPIO19 = 1;
@@ -155,7 +179,15 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
 	SPIbyte3 = SpiaRegs.SPIRXBUF;
 	
-	//write 1 byte data of IOCONvalue to Polarity register
+	/* Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+	0x40 enable the write mode. Note the unsigned int is left shifted 8 bit so that we only send least
+	significant 8 bits. After entering the writing mode, sending 0x05 selects the IOCON register. Next, we 
+	transmit the IOCONvalue to the SPITXBUF to select desired configuration for the device. We must place a while loop to
+	stay here until all set of instructions are done, in this case 3. After this, we set the GPIO19 pins back
+	to 1, un-selecting the pin since we are done giving it instructions. At the end we read the 3 bytes of data 
+	from the FIFO Receive buffer to clear the buffer. */
+	
+	//write 1 byte data of IOCONvalue to ICON register
 	//pull chip select low for chip23S08
 	GpioDataRegs.GPACLEAR.bit.GPIO19 = 1;
 	//send 3 bytes of data across
@@ -170,6 +202,14 @@ GPPUvalue, unsigned int IOCONvalue, unsigned int OLATvalue){
 	SPIbyte1 = SpiaRegs.SPIRXBUF;
 	SPIbyte2 = SpiaRegs.SPIRXBUF;
 	SPIbyte3 = SpiaRegs.SPIRXBUF;
+	
+	/* Clearing the GPIO19 enables us to write instructions to the IR register. Setting the SPITXBUF to 
+	0x40 enable the write mode. Note the unsigned int is left shifted 8 bit so that we only send least
+	significant 8 bits. After entering the writing mode, sending 0x0A selects the OLAT register. Next, we 
+	transmit the OLATvalue to the SPITXBUF to select desired output latches that modify the pins configured as 
+	outputs. We must place a while loop to stay here until all set of instructions are done, in this case 3. After
+	this, we set the GPIO19 pins back to 1, un-selecting the pin since we are done giving it instructions. At the
+	end we read the 3 bytes of data from the FIFO Receive buffer to clear the buffer. */
 	
 	//write 1 byte data of OLATvalue to OLAT register
 	//pull chip select low for chip23S08
@@ -194,8 +234,6 @@ Only the least significant 8 bits are sent to the MCP23S08’s
 OLAT register. Only the bits setup as outputs will be changed by writing to the OLAT register. Poll on
 the RXFFST status bits to determine when the SPI transmit and receive have completed before returning
 from this function.
-
-write only to OLAT register
 */
 void SetPortLatch(unsigned int byte){
 	//write 1 byte data of OLATvalue to OLAT register
@@ -226,7 +264,7 @@ unsigned int ReadPort(void){
 	//pull chip select low for chip23S08
 	GpioDataRegs.GPACLEAR.bit.GPIO19 = 1;
 	//send 3 bytes of data across
-	SpiaRegs.SPITXBUF = ((unsigned)0x41)<<8;  // RD MODE A1 A0: 0 0 
+	SpiaRegs.SPITXBUF = ((unsigned)0x41)<<8;  // RD MODE A1 A0: 0 1 
 	SpiaRegs.SPITXBUF = ((unsigned)0x09)<<8;  //Address of GPIO register: 09h
 	SpiaRegs.SPITXBUF = ((unsigned)0x00)<<8;  //send random data
 	//wait for transmission/recption to happen
