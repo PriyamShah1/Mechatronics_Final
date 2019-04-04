@@ -28,7 +28,7 @@ void init_SPI(void){
 		thus setting the pins to General Purpose Input/Output mode. GPADIR sets the GPIO pins
 		to act as output, so to transmit data to the master chip. GPASET controls the slave select,
 		setting this value to 1 un-select it stops us from giving it commands. */
-		GpioCtrlRegs.GPAMUX1.bit.GPIO09 = 0;
+		GpioCtrlRegs.GPAMUX1.bit.GPIO9 = 0;
 		GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 0;
 		GpioCtrlRegs.GPAMUX1.bit.GPIO11 = 0;
 		GpioCtrlRegs.GPAMUX2.bit.GPIO22 = 0;
