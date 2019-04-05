@@ -6,22 +6,22 @@ SHELL = cmd.exe
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CFG_SRCS += \
-C:/decamar2_lab/trunk/Labs/Lab6/SYSBIOS/Lab6.cfg 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/SYSBIOS/Lab6.cfg 
 
 LIB_SRCS += \
-C:/decamar2_lab/trunk/LabFiles/bsl_forSYSBIOS/lib/evmomapl138_bsl.lib 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/bsl_forSYSBIOS/lib/evmomapl138_bsl.lib 
 
 C_SRCS += \
-C:/decamar2_lab/trunk/Labs/Lab6/source/COECSL_edma3.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/COECSL_mcbsp.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/ColorLCD.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/ColorVision.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/LCDprintf.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/Ladar.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/MatrixMath.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/pru.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/user_Lab6.c \
-C:/decamar2_lab/trunk/Labs/Lab6/source/user_xy.c 
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/COECSL_edma3.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/COECSL_mcbsp.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/ColorLCD.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/ColorVision.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/LCDprintf.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/Ladar.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/MatrixMath.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/pru.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/user_Lab6.c \
+C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/user_xy.c 
 
 GEN_CMDS += \
 ./configPkg/linker.cmd 
@@ -92,15 +92,15 @@ GEN_FILES__QUOTED += \
 "configPkg\compiler.opt" 
 
 C_SRCS__QUOTED += \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/COECSL_edma3.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/COECSL_mcbsp.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/ColorLCD.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/ColorVision.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/LCDprintf.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/Ladar.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/MatrixMath.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/pru.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/user_Lab6.c" \
-"C:/decamar2_lab/trunk/Labs/Lab6/source/user_xy.c" 
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/COECSL_edma3.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/COECSL_mcbsp.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/ColorLCD.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/ColorVision.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/LCDprintf.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/Ladar.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/MatrixMath.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/pru.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/user_Lab6.c" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/Labs/Lab6/source/user_xy.c" 
 
 

@@ -95,17 +95,20 @@ float new_turn_command_saturation = 0;
 float new_sharp_right_threshold = 0;
 float new_Kp_sharp_right = 0;
 float new_left_turn_corner_threshold = 0;
+float new_KpGyro = 0;
 
-float ref_right_wall = 0;
-float left_turn_Start_threshold = 0;
-float left_turn_Stop_threshold = 0;
-float Kp_right_wall = 0;
-float Kp_front_wall = 0;
-float front_turn_velocity = 0;
-float turn_command_saturation = 0;
-float sharp_right_threshold = 0;
-float Kp_sharp_right = 0;
-float left_turn_corner_threshold = 0;
+float ref_right_wall = 300;
+float left_turn_Start_threshold = 500;
+float left_turn_Stop_threshold = 800;
+float Kp_right_wall = 0.01;
+float Kp_front_wall = -0.005;
+float front_turn_velocity = 0.4;
+float turn_command_saturation = 1.0;
+float sharp_right_threshold = 400;
+float Kp_sharp_right = 0.02;
+float left_turn_corner_threshold = 400;
+float KpGyro = 400;
+int flag_lv = 0;
 
 int wall_follow_state = 2;
 
@@ -204,6 +207,8 @@ void ComWithLinux(void) {
 
             if (new_LV_data == 0) {
                 sscanf(fromLinuxstring,"%f%f",&LVvalue1,&LVvalue2);
+                new_KpGyro = LVvalue2;
+                flag_lv++;
                 new_LV_data = 1;
             }
 
@@ -215,9 +220,9 @@ void ComWithLinux(void) {
             if (GET_LVDATA_TO_LINUX) {
 
                 // Default
-                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
-                // you would do something like this
-                //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",var1,var2,var3,var4);
+                //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
+                // you would` do something like this
+                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",x,y,0.0,0.0);
 
                 for (i=0;i<ptrshrdmem->DSPSend_size;i++) {
                     ptrshrdmem->DSPSend_buf[i] = toLinuxstring[i];
@@ -409,18 +414,20 @@ Int main()
 
 long timecount= 0;
 int whichled = 0;
-// This SWI is Posted after each set of new data from the F28335
 void RobotControl(void) {
-
-
 
     if(timecount == 3000){
         gyro_zero = ((gyro_sum/3000)*3.0)/4095.0;
+        p1_old = enc1/192.0;
+        p2_old = enc2/192.0;
     }else if(timecount < 3001){
         gyro_sum+= adcA3;
     }else{
-        angular_vel = (((((adcA3*3.0)/4095.0) - gyro_zero)*PI)/180)*400;
+        angular_vel = (((((adcA3*3.0)/4095.0) - gyro_zero)*PI)/180)*KpGyro;
         orientation += ((angular_vel+old_angular_vel)/2)*0.001;
+        if(abs(orientation)>(2*PI)){
+            orientation = (abs(orientation)-2*PI)*abs(orientation)/orientation;
+        }
 
         p1_current = enc1/192.0;
         p2_current = enc2/192.0;
@@ -529,8 +536,8 @@ void RobotControl(void) {
         break;
     case 12:
         if ((count%250) ==0){
-            LCDPrintfLine(1,"X: %.3f",x);
-            LCDPrintfLine(2,"Y: %.3f",y);
+            LCDPrintfLine(1,"X: %.3f Kp: %.1f",x,new_KpGyro);
+            LCDPrintfLine(2,"Y: %.3f O: %.1f",y,orientation*180/PI);
         }
         break;
     }
@@ -582,12 +589,8 @@ void RobotControl(void) {
         new_optitrack = 0;
     }
 
-
-
-
     float front_wall_error = 0;
     float right_wall_error = 0;
-
 
     switch(wall_follow_state){
     case 1: //wall in front, keep rotating CCW
@@ -639,6 +642,11 @@ void RobotControl(void) {
         sharp_right_threshold = new_sharp_right_threshold;
         left_turn_corner_threshold = new_left_turn_corner_threshold;
         newnavdata = 0;//set flag back to zero telling Task that Swi ready for next
+    }
+
+    if (new_LV_data) {
+        KpGyro = new_KpGyro;
+        new_LV_data = 0;
     }
 
     //turn = -enc3/10.0;
