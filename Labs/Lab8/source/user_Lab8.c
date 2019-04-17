@@ -103,7 +103,7 @@ float LVvalue2 = 0;
 int new_LV_data = 0;
 
 int newnavdata = 0;
-float newvref = 0;
+float newvref = 1.0;
 float newturn = 0;
 
 extern sharedmemstruct *ptrshrdmem;
@@ -170,9 +170,10 @@ float v1 = 0;
 float v2 = 0;
 float x = 0;
 float y = 0;
-int wall_follow_state=0;
+int wall_follow_state=2;
 int cnt_chk1 = 0;
 int cnt_chk2 = 0;
+int update_Timer = 0;
 
 pose UpdateOptitrackStates(pose localROBOTps, int * flag);
 
@@ -219,7 +220,8 @@ void ComWithLinux(void) {
             if (GET_LVDATA_TO_LINUX) {
 
                 // Default
-                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
+                //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
+                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",(x+8),(15-y),0.0,0.0);
                 // you would do something like this
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",var1,var2,var3,var4);
 
@@ -447,7 +449,7 @@ void RobotControl(void) {
 
 
     if (new_coordata == 1) {
-        if (colorstate = 1) {
+        if (colorstate == 1) {
             blue_center_x = blue_object_x;
             blue_center_y = blue_object_y;
             blue_area = blue_numpels;
@@ -498,27 +500,21 @@ void RobotControl(void) {
     }
 
     int minLADARright = LADARdistance[52];
-       for(i=53;i<56;i++) {
-           if (LADARdistance[i] < minLADARright) {
-               minLADARright = LADARdistance[i];
-           }
-       }
+    for(i=53;i<56;i++) {
+        if (LADARdistance[i] < minLADARright) {
+            minLADARright = LADARdistance[i];
+        }
+    }
 
-       int minLADARbackright = LADARdistance[0];
-           for(i=1;i<6;i++) {
-               if (LADARdistance[i] < minLADARbackright) {
-                   minLADARbackright = LADARdistance[i];
-               }
-           }
+    int minLADARbackright = LADARdistance[0];
+    for(i=1;i<6;i++) {
+        if (LADARdistance[i] < minLADARbackright) {
+            minLADARbackright = LADARdistance[i];
+        }
+    }
 
 
-    if(timecount == 3000){ //zero gyro
-        gyro_zero = ((gyro_sum/3000)*3.0)/4095.0;
-        p1_old = enc1/192.0;
-        p2_old = enc2/192.0;
-    }else if(timecount < 3001){ //avg gyro values
-        gyro_sum+= adcA3;
-    }else{ //calculate orientation and position
+    if (timecount > 3000){ //calculate orientation and position
         angular_vel = (((((adcA3*3.0)/4095.0) - gyro_zero)*PI)/180)*KpGyro;
         orientation += ((angular_vel+old_angular_vel)/2)*0.001;
         if(abs(orientation)>(2*PI)){
@@ -534,11 +530,12 @@ void RobotControl(void) {
         //pos = pos + ((v1+v2)/2)*0.001;
         x += ((v1+v2)/2)*0.001 * cos(orientation);
         y += ((v1+v2)/2)*0.001 * sin(orientation);
+        p1_old = p1_current;
+        p2_old = p2_current;
+        old_angular_vel = angular_vel;
+
     }
 
-    p1_old = p1_current;
-    p2_old = p2_current;
-    old_angular_vel = angular_vel;
 
     float front_wall_error = 0;
     float right_wall_error = 0;
@@ -577,38 +574,56 @@ void RobotControl(void) {
         turn = (fabs(turn)/turn)*turn_command_saturation;
     }
 
-//    switch(colorstate) {
-//    case 1: //following color
-//        vref = 1;
-//        colorerror = 0-blue_center_x;
-//        turn = KpLight*colorerror;
-//        if (minLADARfront < 300){
-//            colorstate = 2;
-//        }
-//        break;
-//    case 2: //at a wall
-//        vref = 0;
-//        turn = 0;
-//        if (minLADARfront > 300){
-//            colorstate = 1;
-//        }
-//    }
+    //    switch(colorstate) {
+    //    case 1: //following color
+    //        vref = 1;
+    //        colorerror = 0-blue_center_x;
+    //        turn = KpLight*colorerror;
+    //        if (minLADARfront < 300){
+    //            colorstate = 2;
+    //        }
+    //        break;
+    //    case 2: //at a wall
+    //        vref = 0;
+    //        turn = 0;
+    //        if (minLADARfront > 300){
+    //            colorstate = 1;
+    //        }
+    //    }
 
     ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
 
+
+    if(timecount == 3000){ //zero gyro
+        gyro_zero = ((gyro_sum/3000)*3.0)/4095.0;
+        vref = 0;
+        turn = 0;
+    }else if(timecount < 3000){ //avg gyro values
+        gyro_sum+= adcA3;
+        vref = 0;
+        turn = 0;
+        p1_old = enc1/192.0;
+        p2_old = enc2/192.0;
+    }
+
     //determine if in checkpoint
-    if ((minLADARfront < left_turn_Start_threshold) && (minLADARright < ref_right_wall) && (green_area > 900) ) {
-        if ((compass > 3300) || (compass < 300)) { //determine which corner
-            x = 1.5;
-            y = 10.5;
-            orientation = PI;
-            cnt_chk1++;
-        }else if ((compass > 2400) && (compass < 3000)){
-            x = 0.0;
-            y = 1.0;
-            orientation = 3*PI/2;
-            cnt_chk2++;
+    if (update_Timer == 0){
+        if ((minLADARfront < left_turn_Start_threshold) && (minLADARright < ref_right_wall) && (green_area > 500) ) {
+            if ((compass > 3300) || (compass < 300)) { //determine which corner
+                x = 5;
+                y = 11;
+                orientation = PI/2;
+                cnt_chk1++;
+            }else if ((compass > 2400) && (compass < 3000)){
+                x = -5;
+                y = 11;
+                orientation = PI;
+                cnt_chk2++;
+            }
+            update_Timer = 2000;
         }
+    }else{
+        update_Timer--;
     }
 
 
@@ -619,9 +634,11 @@ void RobotControl(void) {
 
 
 
+
     if ((timecount%250)==0){
-        //LCDPrintfLine(1,"Ft: %.2f T: %d",ft,area);
-        LCDPrintfLine(1,"B_c: %.1f B_d: %.1f",blue_center_x,ft);
+        LCDPrintfLine(1,"%.1f   %.1f   %.1f",orientation,x,y);
+        //LCDPrintfLine(1,"%.1f",LADARdistance[113]);
+        //LCDPrintfLine(1,"B_c: %.1f B_d: %.1f",blue_center_x,ft);
         LCDPrintfLine(2,"Chk1: %d Chk2: %d",cnt_chk1,cnt_chk2);
     }
 

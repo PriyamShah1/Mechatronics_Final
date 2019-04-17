@@ -1,0 +1,29 @@
+********************************************************************************
+TMS320C6x Hex Converter                                                   v8.2.2
+********************************************************************************
+
+INPUT FILE NAME: <FinalContestRobot2.out>
+OUTPUT FORMAT:   Binary
+
+PHYSICAL MEMORY PARAMETERS
+   Default data width   :   8
+   Default memory width :   8
+   Default output width :   8
+
+BOOT LOADER PARAMETERS
+   Table Address: 0x0000, PAGE 0
+   Entry Point  : 0x1181ac80
+
+
+OUTPUT TRANSLATION MAP
+--------------------------------------------------------------------------------
+00000000..0003ffff  Page=0  Memory Width=8  ROM Width=8  "SPIFLASH"
+--------------------------------------------------------------------------------
+   OUTPUT FILES: FinalContestRobot2.hex [b0..b7]
+
+   CONTENTS: 00000000..00021523   BOOT TABLE
+                            .vecs : btad=00000000  dest=1182cc00 size=00000200
+                           .cinit : btad=0000020c  dest=1182ce00 size=00000a00
+                            .text : btad=00000c14  dest=11800000 size=0001e200
+                           .const : btad=0001ee1c  dest=11827050 size=0000264e
+                          .switch : btad=00021474  dest=1182c9d8 size=000000a4
