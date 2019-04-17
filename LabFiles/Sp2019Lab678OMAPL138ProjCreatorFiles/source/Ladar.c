@@ -54,6 +54,7 @@ volatile int LADARprocess = 0;
 volatile int uart1count = 0;
 
 char LADARinBuffer[LADAR_IN_BUFF_SIZE];
+#pragma DATA_ALIGN(LADARinBuffer,128)
 char LADARoutBuffer[LADAR_OUT_BUFFER_SIZE];		//Commands to be sent to LADAR
 int numReadings = 0;
 float errL=0,errC=0,errR=0;
