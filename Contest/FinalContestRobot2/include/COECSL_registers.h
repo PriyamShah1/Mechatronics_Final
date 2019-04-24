@@ -149,6 +149,19 @@ There are more unused on GPIO4 but I don't think we will need them.
 #define SET_DATAFORFILE_TO_LINUX (SETGPIO01 = 0x00100000)
 #define CLR_DATAFORFILE_TO_LINUX (CLRGPIO01 = 0x00100000)
 
+/*****New Astar Flags*****/
+#define SET_ASTAR_COMMAND (SETGPIO01 = 0x00000010) // Set by DSP
+#define CLR_ASTAR_COMMAND (CLRGPIO01 = 0x00000010) // Cleared by Linux
+#define GET_ASTAR_COMMAND ((OUTGPIO01 & 0x00000010)>>4) // Get by DSP
+
+#define SET_ASTAR_FAILED (SETGPIO01 = 0x00000020) // Set by Linux
+#define CLR_ASTAR_FAILED (CLRGPIO01 = 0x00000020) // Cleared by Linux
+#define GET_ASTAR_FAILED ((OUTGPIO01 & 0x00000020)>>5) // Get by DSP
+
+#define SET_ASTAR_DONE (SETGPIO01 = 0x00000040) // Set by Linux
+#define CLR_ASTAR_DONE (CLRGPIO01 = 0x00000040) // Cleared by DSP
+#define GET_ASTAR_DONE ((OUTGPIO01 & 0x00000040)>>6) // Get by DSP
+
 // Not needed any more Old name - remove these defines after SP13 semester
 //#define SET_CONTINUOUSDATA_TO_LINUX (SETGPIO01 = 0x00080000)
 //#define CLR_CONTINUOUSDATA_TO_LINUX (CLRGPIO01 = 0x00080000)

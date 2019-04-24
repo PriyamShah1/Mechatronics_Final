@@ -35,7 +35,7 @@
 #include "xy.h"
 
 #define HALFPI PI/2.0
-
+float my_dist = 0.0;
 float my_atanf(float dy, float dx)
 {
 	float ang;

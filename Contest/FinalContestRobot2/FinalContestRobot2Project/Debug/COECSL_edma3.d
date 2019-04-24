@@ -221,6 +221,33 @@ COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/hal/Hwi.h
 COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/hal/Hwi.h
 COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
 COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Types.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IInstance.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__prologue.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Diags.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Log.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Assert.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Error.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Queue.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Clock.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IModule.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Types.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IInstance.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__prologue.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Assert.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Diags.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Log.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Queue.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Clock.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h
+COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IModule.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__epilogue.h
+COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__epilogue.h
 
 C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/COECSL_edma3.c: 
 C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h: 
@@ -443,3 +470,30 @@ C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/hal/Hwi.h:
 C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/hal/Hwi.h: 
 C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
 C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Types.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IInstance.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__prologue.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Diags.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Log.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Assert.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Error.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Queue.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Clock.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IModule.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Types.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IInstance.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__prologue.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Assert.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Diags.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/Log.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Queue.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Clock.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Task.h: 
+C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/IModule.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__epilogue.h: 
+C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__epilogue.h: 

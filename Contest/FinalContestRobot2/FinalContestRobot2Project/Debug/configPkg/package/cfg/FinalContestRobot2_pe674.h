@@ -40,6 +40,15 @@ extern const ti_sysbios_knl_Task_Handle TASK_ComWithLinux;
 #include <ti/sysbios/knl/Task.h>
 extern const ti_sysbios_knl_Task_Handle TASK_LADAR;
 
+#include <ti/sysbios/knl/Task.h>
+extern const ti_sysbios_knl_Task_Handle task2;
+
+#include <ti/sysbios/knl/Task.h>
+extern const ti_sysbios_knl_Task_Handle task3;
+
+#include <ti/sysbios/knl/Semaphore.h>
+extern const ti_sysbios_knl_Semaphore_Handle SEM_startAstar;
+
 extern int xdc_runtime_Startup__EXECFXN__C;
 
 extern int xdc_runtime_Startup__RESETFXN__C;

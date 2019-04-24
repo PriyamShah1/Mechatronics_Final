@@ -68,6 +68,25 @@ extern float adcA6;  // ADC A6 - Analog IR3
 extern float adcA7;  // ADC A7 - Analog IR4
 extern float compass;
 extern float switchstate;
+extern int flagVision;
+extern int new_coordata;
+extern int colorstate;
+
+extern float green_object_x;
+extern float green_object_y;
+extern int green_numpels;
+
+extern float blue_object_x;
+extern float blue_object_y;
+extern int blue_numpels;
+
+float blue_center_x = 0;
+float blue_center_y = 0;
+int blue_area = 0;
+
+float green_center_x = 0;
+float green_center_y = 0;
+int green_area = 0;
 
 extern sharedmemstruct *ptrshrdmem;
 
@@ -85,7 +104,7 @@ int new_LV_data = 0;
 int newnavdata = 0;
 float newvref = 0;
 float newturn = 0;
-
+int firsttime = 1;
 extern sharedmemstruct *ptrshrdmem;
 
 float x_pred[3][1] = {{0},{0},{0}};					// predicted state
@@ -130,6 +149,7 @@ int gyro_degrees = 0;
 float gyro_radians = 0.0;
 float gyro_x = 0,gyro_y = 0;
 float gyro4x_gain = 1;
+extern float mydist;
 
 int statePos = 0;	// index into robotdest
 int robotdestSize = 8;	// number of positions to use out of robotdest
@@ -207,6 +227,198 @@ int DSP_Float17 = 0; //
 int DSP_Float18 = 0; //
 int DSP_Float19 = 0; //
 
+float cntturn = 0;
+float ref_right_wall = 300;
+float left_turn_Start_threshold = 500;
+float left_turn_Stop_threshold = 800;
+float Kp_right_wall = 0.01;
+float Kp_front_wall = -0.005;
+float front_turn_velocity = 0.4;
+float turn_command_saturation = 1.0;
+float sharp_right_threshold = 400;
+float Kp_sharp_right = 0.02;
+float left_turn_corner_threshold = 400;
+float KpGyro = 400;
+
+float p1_old = 0;
+float p2_old = 0;
+float angular_vel = 0;
+float orientation = 0;
+float old_angular_vel = 0;
+float p1_current = 0;
+float p2_current = 0;
+float v1 = 0;
+float v2 = 0;
+float x = 0;
+float y = 0;
+int update_Timer = 0;
+int countdown = 7000;
+int astarRunning = 0;
+int astarTrigger = 0;  // Just a Debug variable value prints in Linux each A* run.
+int astarDone = 0;
+int pathLen = 0;            //used to keep track of number of points in reconstructed path
+int pathPos=0;
+int pathRow[100];         //reconstructed path in reverse order
+int pathCol[100];
+
+char map[176] =         //16x11
+{   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', 'x', 'x', 'x', '0', '0', '0', '0', '0', '0', '0',
+    '0', 'x', 'x', 'x', '0', '0', '0', '0', '0', '0', '0',
+    '0', 'x', 'x', 'x', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', '0', '0', '0', '0', '0', 'x', 'x', 'x', '0',
+    'x', 'x', '0', '0', '0', '0', '0', 'x', 'x', 'x', '0',
+    'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x', 'x', '0',
+    '0', '0', '0', '0', '0', 'x', 'x', 'x', '0', '0', '0',
+    '0', '0', '0', '0', '0', 'x', 'x', 'x', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'   };
+
+char originalMap[176] =
+{   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    'x', 'x', 'x', 'x', '0', '0', '0', 'x', 'x', 'x', 'x',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'   };
+
+int myRound(float var) {
+
+    if ( ( fabs(var) - floorf( fabs(var) ) ) > 0.5) {
+        if (var > 0.0) {return ceil(var);}
+        else {return floor(var);}
+    }
+    else {
+        if (var > 0.0) {return floor(var);}
+        else {return ceil(var);}
+    }
+}
+
+
+
+// This is telling Astar to RUN!
+void runAstar(void) {
+    float robotdestx = 0;
+    float robotdesty = 0;
+    float robotx = 0;
+    float roboty = 0;
+    int local_statePos = 0;
+    while(1) {
+        int i = 0;
+        Semaphore_pend(SEM_startAstar,BIOS_WAIT_FOREVER);
+
+        if(!GET_ASTAR_COMMAND && !astarRunning) {
+            astarRunning = 1;
+            astarTrigger = 0;   // Debug print in Linux
+            robotx = ROBOTps.x;
+            roboty = ROBOTps.y;
+            local_statePos = statePos;
+            robotdestx = robotdest[local_statePos].x;
+            robotdesty = robotdest[local_statePos].y;
+
+            //For now, Update the shared variables that need to be sent for astar
+            for (i=0;i<176;i++) {
+                ptrshrdmem->sharedAstarMap[i] = map[i];
+            }
+
+            ptrshrdmem->astarTrigger = astarTrigger;
+            ptrshrdmem->sharedDestRow = (11.0 - robotdesty);
+            ptrshrdmem->sharedDestCol = (5.0 + robotdestx);
+            ptrshrdmem->sharedRobotRow = (11.0 - myRound(roboty));
+            ptrshrdmem->sharedRobotCol = (myRound(robotx) + 5.0);
+
+            Cache_wb((void *)ptrshrdmem,sizeof(sharedmemstruct), Cache_Type_ALL, EDMA3_CACHE_WAIT);
+            //BCACHE_wb((void *)ptrshrdmem,sizeof(sharedmemstruct),EDMA3_CACHE_WAIT);
+            SET_ASTAR_COMMAND;
+        }
+    }
+
+}
+
+// Periodic
+void LinuxAstar(void) {
+    float robotdestx = 0;
+    float robotdesty = 0;
+    float robotx = 0;
+    float roboty = 0;
+    int local_statePos = 0;
+    int i = 0;
+    Task_sleep(10);
+    while(1) {
+        Task_sleep(5);
+        //GET_STAR_DONE is set when linux finishes running the a star algo irrespective of whether its succesful or failed
+        if (GET_ASTAR_DONE) {
+            //In case it failed-> couldn't find path, map is reset to original, only walls everything else cleared
+            if (GET_ASTAR_FAILED) {
+
+                CLR_ASTAR_DONE;
+                robotx = ROBOTps.x;
+                roboty = ROBOTps.y;
+                local_statePos = statePos;
+                robotdestx = robotdest[local_statePos].x;
+                robotdesty = robotdest[local_statePos].y;
+                astarRunning = 1;
+                astarTrigger = 5;   // Debug print in Linux
+
+                // If we get here, there was no path found between the robot and one of the waypoints.
+                // The map is reset
+                for (i=0;i<176;i++) {
+                    map[i] = originalMap[i];
+                    ptrshrdmem->sharedAstarMap[i] = map[i];
+                }
+                // ALSO make sure to clear your obstacle tally an other obstacle recognition variables you have created.
+
+
+                ptrshrdmem->astarTrigger = astarTrigger;
+                ptrshrdmem->sharedDestRow = (11.0 - robotdesty);
+                ptrshrdmem->sharedDestCol = (5.0 + robotdestx);
+                ptrshrdmem->sharedRobotRow = (11.0 - myRound(roboty));
+                ptrshrdmem->sharedRobotCol = (myRound(robotx) + 5.0);
+
+                Cache_wb((void *)ptrshrdmem,sizeof(sharedmemstruct), Cache_Type_ALL, EDMA3_CACHE_WAIT);
+                //BCACHE_wb((void *)ptrshrdmem,sizeof(sharedmemstruct),EDMA3_CACHE_WAIT);
+                SET_ASTAR_COMMAND; //set every time we want to go into astar as opposed to done which is cleared only when we our astar is succesful
+
+            }
+            else { // Astar successful
+                Cache_inv((void *)ptrshrdmem,sizeof(sharedmemstruct), Cache_Type_ALL, EDMA3_CACHE_WAIT);
+                //BCACHE_inv((void *)ptrshrdmem,sizeof(sharedmemstruct),EDMA3_CACHE_WAIT);
+                pathLen = ptrshrdmem->sharedPathLen;
+
+                for (i=0;i<pathLen;i++) {
+
+                    pathCol[pathLen - i - 1] = (ptrshrdmem->sharedPathCol[i] - 5.0);
+                    pathRow[pathLen - i - 1] = (11.0 - ptrshrdmem->sharedPathRow[i]); // Inverting the order of array. And then converting from Astar to Robot coordinates
+                }
+                CLR_ASTAR_DONE;
+                if (pathLen > 1) {
+                    pathPos = 1;
+                } else {
+                    pathPos = 0;
+                }
+
+                astarRunning = 0; // basic functionality same as CLR_ASTAR_DONE but on DSP side this is more reliable
+                astarDone = 1;
+                //.. given CLR_ASTAR_DONE can also be set by linux
+            }
+        }
+    }
+}
 pose UpdateOptitrackStates(pose localROBOTps, int * flag);
 
 void ComWithLinux(void) {
@@ -270,7 +482,7 @@ void ComWithLinux(void) {
             if (GET_LVDATA_TO_LINUX) {
 
                 // Default
-                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
+                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",(x+8),(15-y),0.0,0.0);
                 // you would do something like this
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",var1,var2,var3,var4);
 
@@ -442,23 +654,23 @@ Int main()
     x_pred[2][0] = ROBOTps.theta;
 
     // TODO: defined destinations that moves the robot around and outside the course
-    robotdest[0].x = 5; 	robotdest[0].y = 9;
+    robotdest[0].x = 0; 	robotdest[0].y = 0;
     robotdest[1].x = -5;	robotdest[1].y = 9;
     robotdest[2].x = 5;     robotdest[2].y = 9;
-    robotdest[3].x = -5;    robotdest[3].y = 9;
+    robotdest[3].x = 0;    robotdest[3].y = 0;
     robotdest[4].x = 5;     robotdest[4].y = 9;
     robotdest[5].x = -5;    robotdest[5].y = 9;
     robotdest[6].x = 5;     robotdest[6].y = 9;
     robotdest[7].x = -5;    robotdest[7].y = 9;
-//    //middle of bottom
-//    robotdest[2].x = 0;		robotdest[2].y = 5;
-//    //outside the course
-//    robotdest[3].x = 4;		robotdest[3].y = 10;
-//    //back to middle
-//    robotdest[4].x = 0;		robotdest[4].y =5;
-//    robotdest[5].x = -4;		robotdest[5].y = -10;
-//    robotdest[6].x =0;		robotdest[6].y = 5;
-//    robotdest[7].x = 4;		robotdest[7].y = -10;
+    //    //middle of bottom
+    //    robotdest[2].x = 0;		robotdest[2].y = 5;
+    //    //outside the course
+    //    robotdest[3].x = 4;		robotdest[3].y = 10;
+    //    //back to middle
+    //    robotdest[4].x = 0;		robotdest[4].y =5;
+    //    robotdest[5].x = -4;		robotdest[5].y = -10;
+    //    robotdest[6].x =0;		robotdest[6].y = 5;
+    //    robotdest[7].x = 4;		robotdest[7].y = -10;
 
 
     // flag pins
@@ -523,7 +735,7 @@ void RobotControl(void) {
     }
 
     int minLADARfrontright = LADARdistance[29];
-    for(i=30;i<105;i++) { //30 105
+    for(i=30;i<105;i++) { //29 105
         if (LADARdistance[i] < minLADARfrontright) {
             minLADARfrontright = LADARdistance[i];
         }
@@ -531,14 +743,26 @@ void RobotControl(void) {
 
 
     int minLADARfrontleft = LADARdistance[124];
-    for(i=125;i<196;i++) { //125 196
+    for(i=125;i<196;i++) { //124 196
         if (LADARdistance[i] < minLADARfrontleft) {
             minLADARfrontleft = LADARdistance[i];
         }
     }
 
 
+    int minLADARfront = LADARdistance[110];
+    for(i=111;i<116;i++) {//110 116
+        if (LADARdistance[i] < minLADARfront) {
+            minLADARfront = LADARdistance[i];
+        }
+    }
 
+    int minLADARright = LADARdistance[52];
+        for(i=53;i<56;i++) {// 52 56
+            if (LADARdistance[i] < minLADARright) {
+                minLADARright = LADARdistance[i];
+            }
+        }
 
     if (GET_OPTITRACKDATA_FROM_LINUX) {
 
@@ -633,112 +857,157 @@ void RobotControl(void) {
             Matrix3x3_Add(eye3, K, temp_3x3, 1.0, -1.0);
             Matrix3x3_Mult(temp_3x3, P_pred, P_pred);
 
-        }	// end of correction step
+            //our code for robot orientation and position
+            angular_vel = (((((adcA3*3.0)/4095.0) - gyro_zero)*PI)/180)*KpGyro;
+            orientation += ((angular_vel+old_angular_vel)/2)*0.001;
+            if(abs(orientation)>(2*PI)){
+                orientation = (abs(orientation)-2*PI)*abs(orientation)/orientation;
+            }
 
-        //State Machine for LCD Printing
-                       switch((int)(switchstate)) {
-                       case 0:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),RobotState);
-                               LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
-                           }
-                           break;
-                       case 1:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case %d",(int)(switchstate));
-                               LCDPrintfLine(2,"V: %.2f T: %.2f",vref,turn);
-                           }
-                           break;
-                       case 2:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case %d",(int)(switchstate));
-                               LCDPrintfLine(2,"x: %.1f y: %.1f",ROBOTps.x,ROBOTps.y);
-                           }
-                           break;
-                       case 3:
-                           if ((timecount%250)==0){ //gyro
-                               LCDPrintfLine(1,"Cal Gyro -- %.1fSecs", (float)(SETTLETIME - settlegyro)/1000.0 );
-                               LCDPrintfLine(2,"");
-                           }
-                           break;
-                       case 4:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 5:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 6:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 7:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 8:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 9:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 10:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 11:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 12:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 13:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 14:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       case 15:
-                           if ((timecount%250)==0){
-                               LCDPrintfLine(1,"Case");
-                               LCDPrintfLine(2,"%d",(int)(switchstate));
-                           }
-                           break;
-                       }
+
+        }	// end of correction step
 
         // set ROBOTps to the updated and corrected Kalman values.
         ROBOTps.x = x_pred[0][0];
         ROBOTps.y = x_pred[1][0];
         ROBOTps.theta = x_pred[2][0];
+
+        if (firsttime ==1  && timecount > 200) {
+            Semaphore_post(SEM_startAstar);
+            firsttime = 0;
+        }
+//        if (countdown == 0){
+//            p1_current = enc1/192.0;
+//            p2_current = enc2/192.0;
+//
+//            v1 = (p1_current-p1_old)/0.001;
+//            v2 = (p2_current-p2_old)/0.001;
+//
+//            //pos = pos + ((v1+v2)/2)*0.001;
+//            x += ((v1+v2)/2)*0.001 * cos(orientation);
+//            y += ((v1+v2)/2)*0.001 * sin(orientation);
+//            p1_old = p1_current;
+//            p2_old = p2_current;
+//            old_angular_vel = angular_vel;
+//        }else{ countdown--;}
+//
+//        //correct gyro drift
+//        if (update_Timer == 0){
+//            if ((minLADARfront < left_turn_Start_threshold) && (minLADARright < ref_right_wall) && (green_area > 500) ) {
+//                if ((compass > 3300) || (compass < 300)) { //determine which corner
+//                    x = 5;
+//                    y = 11;
+//                    orientation = PI/2;
+//                }else if ((compass > 2400) && (compass < 3000)){
+//                    x = -5;
+//                    y = 11;
+//                    orientation = PI;
+//                }
+//                update_Timer = 2000;
+//            }
+//        }else{
+//            update_Timer--;
+//        }
+
+        //LCD Printing
+        switch((int)(switchstate)) {
+        case 0:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),RobotState);
+                LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
+            }
+            break;
+        case 1:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case %d",(int)(switchstate));
+                LCDPrintfLine(2,"V: %.2f T: %.2f",vref,turn);
+            }
+            break;
+        case 2:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case %d",(int)(switchstate));
+                LCDPrintfLine(2,"x: %.1f y: %.1f",ROBOTps.x,ROBOTps.y);
+            }
+            break;
+        case 3:
+            if ((timecount%250)==0){ //gyro
+                LCDPrintfLine(1,"Cal Gyro -- %.1fSecs", (float)(SETTLETIME - settlegyro)/1000.0 );
+                LCDPrintfLine(2,"");
+            }
+            break;
+        case 4:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 5:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 6:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 7:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 8:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 9:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 10:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 11:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 12:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 13:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 14:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        case 15:
+            if ((timecount%250)==0){
+                LCDPrintfLine(1,"Case");
+                LCDPrintfLine(2,"%d",(int)(switchstate));
+            }
+            break;
+        }
 
 
 
@@ -753,53 +1022,85 @@ void RobotControl(void) {
             }
         }
 
-
-
-
+//        float obstacle_avoidance_threshold = 0.5;
+//        float prev_obstacle_avoidance_threshold = 1.0;
+//        float dx;
+//        float dy;
+//        float dist = 0.0F;
+//        float dx_prev;
+//        float dy_prev;
+//        float prev_dist = 0.0F;
+//        int prevstatePos = 0;
         // uses xy code to step through an array of positions
-        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
-        { statePos = (statePos+1)%robotdestSize; }
+//        dx = robotdest[statePos].x - ROBOTps.x;
+//        dy = robotdest[statePos].y - ROBOTps.y;
+//        dist = sqrtf( dx*dx + dy*dy );
+//        if(statePos != 0){
+//            prevstatePos = statePos - 1;
+//            dx_prev = robotdest[prevstatePos].x - ROBOTps.x;
+//            dy_prev = robotdest[prevstatePos].y - ROBOTps.y;
+//            prev_dist = sqrtf(dx_prev*dx_prev + dy_prev*dy_prev);
+//        }
 
-        FrontLeft_error = 600 - minLADARfrontleft;
-        FrontRight_error = 600 - minLADARfrontright;
+//        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
+//        { statePos = (statePos+1)%robotdestSize; }
 
-        switch(RobotState) {
-        case 1: //Dodge to the right
-            turn += Kp_obs*FrontLeft_error;
-            vref -= Kp_vref_obs*FrontLeft_error;
-            if (350 > minLADARfrontright)  {
-                RobotState = 4;
-            }else if (minLADARfrontleft < 600){
-                RobotState = 1;
-            }else {
-                RobotState = 3;
+        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5))
+        {
+            pathPos++;
+            if (pathPos == pathLen) {
+                statePos = (statePos+1)%robotdestSize;
+                Semaphore_post(SEM_startAstar);
             }
-            break;
-        case 2: //Dodge to the left
-            turn -= Kp_obs*FrontRight_error;
-            vref -= Kp_vref_obs*FrontRight_error;
-            if (350 > minLADARfrontleft) {
-                RobotState = 4;
-            }else if (minLADARfrontright < 600){
-                RobotState = 2;
-            }else{
-                RobotState = 3;
-            }
-            break;
-        case 3: //no avoidance needed
-            if (minLADARfrontright < 600) {
-                RobotState = 2;
-            }else if (minLADARfrontleft < 600) {
-                RobotState = 1;
-            }
-            break;
-        case 4: //Tunnel Vision
-            turn = Kp_obs*FrontRight_error;
-            vref = 1; //Kp_vref_obs*FrontLeft_error;
-            if ((350 < minLADARfrontright) || (350 < minLADARfrontleft)){
-                RobotState = 3;
-            }
-        }//code worked before tunnel case
+
+        }
+//
+//        // everytime an obstacle is recorded we call A star in the map code
+//        FrontLeft_error = 600 - minLADARfrontleft;
+//        FrontRight_error = 600 - minLADARfrontright;
+//
+//        //        if((dist > obstacle_avoidance_threshold) || (prev_dist > prev_obstacle_avoidance_threshold)){
+//        switch(RobotState) {
+//        case 1: //Dodge to the right
+//            turn += Kp_obs*FrontLeft_error;
+//            //vref -= Kp_vref_obs*FrontLeft_error;
+//            //                if (350 > minLADARfrontright)  {
+//            //                    RobotState = 4;
+//            //                }else
+//            if (minLADARfrontleft < 600){
+//                RobotState = 1;
+//            }else {
+//                RobotState = 3;
+//            }
+//            break;
+//        case 2: //Dodge to the left
+//            turn -= Kp_obs*FrontRight_error;
+//            //vref -= Kp_vref_obs*FrontRight_error;
+//            //                if (350 > minLADARfrontleft) {
+//            //                    RobotState = 4;
+//            //                }else
+//            if (minLADARfrontright < 600){
+//                RobotState = 2;
+//            }else{
+//                RobotState = 3;
+//            }
+//            break;
+//        case 3: //no avoidance needed
+//            if (minLADARfrontright < 600) {
+//                RobotState = 2;
+//            }else if (minLADARfrontleft < 600) {
+//                RobotState = 1;
+//            }
+//            break;
+//            //            case 4: //Tunnel Vision
+//            //                turn = Kp_obs*FrontRight_error;
+//            //                vref = 1; //Kp_vref_obs*FrontLeft_error;
+//            //                if ((350 < minLADARfrontright) || (350 < minLADARfrontleft)){
+//            //                    RobotState = 3;
+//            //                }
+//            //                break;
+//        }//code worked before tunnel case
+//    }
 
 
         if (vref<0.5){
@@ -826,6 +1127,11 @@ void RobotControl(void) {
             DSP_Float18 = new_DSP_Float18;
             DSP_Float19 = new_DSP_Float19;
             newnavdata = 0;
+        }
+
+        if(astarRunning == 1){
+            vref = 0;
+            turn = 0;
         }
 
         SetRobotOutputs(vref,turn,0,0,0,0,0,0,0,0);

@@ -88,7 +88,6 @@ float green_center_x = 0;
 float green_center_y = 0;
 int green_area = 0;
 
-
 extern sharedmemstruct *ptrshrdmem;
 
 float vref = 1.0;
