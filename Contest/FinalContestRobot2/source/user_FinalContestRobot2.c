@@ -101,6 +101,20 @@ float LVvalue1 = 0;
 float LVvalue2 = 0;
 int new_LV_data = 0;
 
+typedef struct{
+    int r;
+    int c;
+    int x;
+    int y;
+    int tally;
+    int found;
+    int idx1;
+    int idx2;
+    int idx3;
+    int sendLV;
+    int orientation;
+}edges;
+
 int newnavdata = 0;
 float newvref = 0;
 float newturn = 0;
@@ -296,6 +310,7 @@ char originalMap[176] =
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
     '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'   };
+
 
 int myRound(float var) {
 
@@ -733,7 +748,158 @@ void RobotControl(void) {
             break;
         }
     }
+    edges obs[57];
+    for(i=0; i<6; i++){
+        obs[i].x = -5 + 2*i;
+        obs[i].y = 10;
+        obs[i].r = 1;
+        obs[i].c = 1 + 2*i;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
+        obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+        obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
+        obs[i].orientation = 0; // horizontal orientation
+    }
+    for(i=6; i<11; i++){
+        obs[i].x = -4 + 2*i;
+        obs[i].y = 9;
+        obs[i].r = 2;
+        obs[i].c = 2 + 2*i;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].orientation = 1; // vertical orientation
+    }
+    for(i=11; i<17; i++){
+        obs[i].x = -5 + 2*((i+1)%6);
+        obs[i].y = 8;
+        obs[i].r = 3;
+        obs[i].c = 1 + 2*((i+1)%6);
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = obs[i].r *11 + obs[i].c-1;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = obs[i].r * 11 + obs[i].c+1;
+        obs[i].orientation = 0; // horizontal orientation
 
+    }
+    for(i=17; i<22; i++){
+        obs[i].x = -4 + 2*((i+1)%6);
+        obs[i].y = 7;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].r = 4;
+        obs[i].c = 2 + 2*((i+1)%6);
+        obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].orientation = 1; // vertical orientation
+    }
+    for(i=22; i<28; i++){
+        obs[i].x = -5 + 2*((i+2)%6);
+        obs[i].y = 6;
+        obs[i].r = 5;
+        obs[i].c = 1 + 2*((i+2)%6);
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = obs[i].r *11 + obs[i].c-1;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = obs[i].r * 11 + obs[i].c+1;
+        obs[i].orientation = 0; // horizontal orientation
+
+    }
+    for(i=28; i<33; i++){
+        obs[i].x = -4 + 2*((i+2)%6);
+        obs[i].y = 5;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].r = 6;
+        obs[i].c = 2 + 2*((i+2)%6);
+        obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].orientation = 1; // vertical orientation
+
+    }
+    for(i=33; i<39; i++){
+        obs[i].x = -5 + 2*((i+3)%6);
+        obs[i].y = 4;
+        obs[i].r = 7;
+        obs[i].c = 1 + 2*((i+3)%6);
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
+        obs[i].orientation = 0; // horizontal orientation
+
+    }
+    for(i=39; i<44; i++){
+        obs[i].x = -4 + 2*((i+3)%6);
+        obs[i].y = 3;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].r = 8;
+        obs[i].c = 2 + 2*((i+3)%6);
+        obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].orientation = 1; // vertical orientation
+
+    }
+    for(i=44; i<50; i++){
+        obs[i].x = -5 + 2*((i+4)%6);
+        obs[i].y = 2;
+        obs[i].r = 9;
+        obs[i].c = 1 + 2*((i+4)%6);
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].idx1 = obs[i].r *11 + obs[i].c-1;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = obs[i].r * 11 + obs[i].c+1;
+        obs[i].orientation = 0; // horizontal orientation
+
+    }
+    for(i=50; i<55; i++){
+        obs[i].x = -4 + 2*((i+4)%6);
+        obs[i].y = 1;
+        obs[i].tally = 0;
+        obs[i].found = 0;
+        obs[i].r = 10;
+        obs[i].c = 2 + 2*((i+4)%6);
+        obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
+        obs[i].idx2 = obs[i].r *11 + obs[i].c;
+        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].orientation = 1; // vertical orientation
+
+    }
+    for(i=0;i<5;i++){
+        obs[11*i].idx1 = 400;
+        obs[11*i + 5].idx3 = 400;
+    }
+    obs[55].x = -1;
+    obs[55].y = 0;
+    obs[55].r = 10;
+    obs[55].c = 5;
+    obs[55].tally = 0;
+    obs[55].found = 0;
+    obs[55].idx1 = obs[55].r *11 + obs[55].c-1;
+    obs[55].idx2 = obs[55].r *11 + obs[55].c;
+    obs[55].idx3 = obs[55].r * 11 + obs[55].c+1;
+    obs[55].orientation = 0; // horizontal orientation
+    obs[56].x = 1;
+    obs[56].y = 0;
+    obs[56].r = 10;
+    obs[56].c = 7;
+    obs[56].tally = 0;
+    obs[56].found = 0;
+    obs[56].idx1 = obs[56].r *11 + obs[56].c-1;
+    obs[56].idx2 = obs[56].r *11 + obs[56].c;
+    obs[56].idx3 = obs[56].r * 11 + obs[56].c+1;
+    obs[56].orientation = 0; // horizontal orientation
     int minLADARfrontright = LADARdistance[29];
     for(i=30;i<105;i++) { //29 105
         if (LADARdistance[i] < minLADARfrontright) {
@@ -1011,7 +1177,12 @@ void RobotControl(void) {
 
 
 
-
+        float xdist[11];
+        float ydist[11];
+        float dist[11];
+        float distthresh = .25;
+        float mindist = 100;
+        int j;
         if (newLADARdata == 1) {
             newLADARdata = 0;
             for (i=0;i<228;i++) {
@@ -1020,9 +1191,40 @@ void RobotControl(void) {
                 LADARdataX[i] = newLADARdataX[i];
                 LADARdataY[i] = newLADARdataY[i];
             }
+            for(i=0;i<11;i++){
+                xdist[i] = LADARdataX[30 + 17*i];
+                ydist[i] = LADARdataY[30 + 17*i];
+            }
+            for(i=0;i<57;i++){
+                for(j=0;j<11;j++){
+                    dist[j] = sqrtf(((xdist[j] - obs[i].x)*(xdist[j] - obs[i].x)) + ((ydist[j] - obs[i].y)*(ydist[j] - obs[i].y)));
+                }
+                for(j=0;j<11;j++){
+                    if(mindist > dist[j]){
+                        mindist = dist[j];
+                    }
+                }
+                if(mindist < distthresh){
+                    obs[i].tally++;
+                }
+                if((obs[i].tally > 4) && (obs[i].orientation == 1)){
+                    map[obs[i].idx1] = 'x';
+                    map[obs[i].idx2] = 'x';
+                    map[obs[i].idx3] = 'x';
+                }
+                if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx1 == 400)){
+                    map[obs[i].idx2] = 'x';
+                    map[obs[i].idx3] = 'x';
+                }
+                if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx3 == 400)){
+                    map[obs[i].idx1] = 'x';
+                    map[obs[i].idx2] = 'x';
+                }
+            }
+            Semaphore_post(SEM_startAstar);
         }
 
-//        float obstacle_avoidance_threshold = 0.5;
+        //        float obstacle_avoidance_threshold = 0.5;
 //        float prev_obstacle_avoidance_threshold = 1.0;
 //        float dx;
 //        float dy;
