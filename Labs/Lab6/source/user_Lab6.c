@@ -219,6 +219,8 @@ void ComWithLinux(void) {
         if ((tskcount%6)==0) {
             if (GET_LVDATA_TO_LINUX) {
 
+
+
                 // Default
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"1.0 1.0 1.0 1.0");
                 // you would` do something like this
