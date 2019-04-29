@@ -92,7 +92,7 @@ extern sharedmemstruct *ptrshrdmem;
 
 float vref = 0;
 float turn = 0;
-
+int robotstate = 0;
 int tskcount = 0;
 char fromLinuxstring[LINUX_COMSIZE + 2];
 char toLinuxstring[LINUX_COMSIZE + 2];
@@ -101,7 +101,7 @@ float LVvalue1 = 0;
 float LVvalue2 = 0;
 int new_LV_data = 0;
 
-typedef struct{
+typedef struct edges_tag{
     int r;
     int c;
     int x;
@@ -115,6 +115,13 @@ typedef struct{
     int orientation;
     int found_flag;
 }edges;
+typedef struct box_tag{
+    edges edge[4];
+    int no_left_wall;
+    int no_right_wall;
+}box;
+
+
 
 int newnavdata = 0;
 float newvref = 0;
@@ -324,7 +331,7 @@ char originalMap[176] =
 
 
 edges obs[57];
-
+box boxes[30];
 int myRound(float var) {
 
     if ( ( fabs(var) - floorf( fabs(var) ) ) > 0.5) {
@@ -928,8 +935,46 @@ Int main()
     obs[56].idx3 = obs[56].r * 11 + obs[56].c+1;
     obs[56].orientation = 0; // horizontal orientation
     obs[56].sendLV = 0;
-
-
+    for(i = 0; i < 30; i ++){
+        boxes[i].no_left_wall = 0;
+        boxes[i].no_right_wall = 0;
+    }
+    for(i = 0; i < 5; i ++){
+        boxes[i].edge[0] = obs[11*i]; // top, boxes go down from top left to bottom left and then shift over a column
+        boxes[i].edge[1] = obs[6 + 11*i]; // right
+        boxes[i].edge[2] = obs[11 + 11*i]; // bottom
+        boxes[i].no_left_wall = 1;
+    }
+    for(i = 5; i < 10; i ++){
+        boxes[i].edge[0] = obs[1 + 11*(i%5)];
+        boxes[i].edge[1] = obs[7 + 11*(i%5)];
+        boxes[i].edge[2] = obs[12 + 11*(i%5)];
+        boxes[i].edge[3] = obs[6 + 11*(i%5)];
+    }
+    for(i = 10; i < 15; i ++){
+        boxes[i].edge[0] = obs[2 + 11*(i%5)];
+        boxes[i].edge[1] = obs[8 + 11*(i%5)];
+        boxes[i].edge[2] = obs[13 + 11*(i%5)];
+        boxes[i].edge[3] = obs[7 + 11*(i%5)];
+    }
+    for(i = 15; i < 20; i ++){
+        boxes[i].edge[0] = obs[3 + 11*(i%5)];
+        boxes[i].edge[1] = obs[9 + 11*(i%5)];
+        boxes[i].edge[2] = obs[13 + 11*(i%5)];
+        boxes[i].edge[3] = obs[8 + 11*(i%5)];
+    }
+    for(i = 20; i < 25; i ++){
+        boxes[i].edge[0] = obs[4 + 11*(i%5)];
+        boxes[i].edge[1] = obs[10 + 11*(i%5)];
+        boxes[i].edge[2] = obs[14 + 11*(i%5)];
+        boxes[i].edge[3] = obs[9 + 11*(i%5)];
+    }
+    for(i = 25; i < 30; i ++){
+        boxes[i].edge[0] = obs[5 + 11*(i%5)];
+        boxes[i].edge[2] = obs[15 + 11*(i%5)];
+        boxes[i].edge[3] = obs[10 + 11*(i%5)];
+        boxes[i].no_right_wall = 1;
+    }
     // flag pins
     GPIO_setDir(IMAGE_TO_LINUX_BANK, IMAGE_TO_LINUX_FLAG, GPIO_OUTPUT);
     GPIO_setDir(OPTITRACKDATA_FROM_LINUX_BANK, OPTITRACKDATA_FROM_LINUX_FLAG, GPIO_OUTPUT);
@@ -1289,6 +1334,10 @@ void RobotControl(void) {
             for(i=0;i<11;i++){
                 xdist[i] = LADARdataX[30 + 17*i];
                 ydist[i] = LADARdataY[30 + 17*i];
+                if(LADARdistance[30 + 17*i] > 1800){
+                    xdist[i] = 170; // guaranteed not to be inside course so value will be ignored
+                    ydist[i] = 170;// guaranteed not to be inside course ...
+                }
             }
             for(i=0;i<57;i++){
                 mindist =  100;
@@ -1301,23 +1350,16 @@ void RobotControl(void) {
                     }
                     if(mindist < distthresh){
                         obs[i].tally++;
-
                     }
-
-                    //                    if(obs[i].sendLV = 0){
-                    //                        data1 = obs[i].x;
-                    //                        data2 = obs[i].y;
-                    //                        data3 = obs[i].orientation;
-                    //                        obs[i].sendLV = 1;
-                    //                        LVsent = 1;
-                    //                    }
-
                     if((obs[i].tally > 4) && (obs[i].orientation == 1)){
                         map[obs[i].idx1] = 'x';
                         map[obs[i].idx2] = 'x';
                         map[obs[i].idx3] = 'x';
                         obs[i].sendLV = 1;
                         obs[i].found_flag = 1;
+                        if(orientation = 0 ){
+
+                        }
                         Semaphore_post(SEM_startAstar);
                     }
                     if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx1 == 400)){
@@ -1368,7 +1410,14 @@ void RobotControl(void) {
 
         //        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
         //        { statePos = (statePos+1)%robotdestSize; }
-
+        switch(robotstate){
+        case 1:
+                if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
+                { statePos = (statePos+1)%robotdestSize; }
+                if(ROBOTps.y >= 0){
+                    robotstate = 2;
+                }
+        case 2:
         if( xy_control(&vref, &turn, 2.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5))
         {
             pathPos++;
@@ -1376,8 +1425,14 @@ void RobotControl(void) {
                 statePos = (statePos+1)%robotdestSize;
                 Semaphore_post(SEM_startAstar);
             }
+            if(ROBOTps.y < 0){
+                robotstate = 1;
+            }
 
         }
+        }
+        // obstacle avoidance maybe use ultrasonic sensors
+
         //
         //        // everytime an obstacle is recorded we call A star in the map code
         //        FrontLeft_error = 600 - minLADARfrontleft;
