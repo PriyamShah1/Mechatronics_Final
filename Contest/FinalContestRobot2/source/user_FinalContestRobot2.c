@@ -1007,47 +1007,47 @@ Int main()
     obs[56].idx3 = obs[56].r * 11 + obs[56].c+1;
     obs[56].orientation = 0; // horizontal orientation
     obs[56].sendLV = 0;
-    for(i = 0; i < 30; i ++){
-        boxes[i].no_left_wall = 0;
-        boxes[i].no_right_wall = 0;
-
-    }
-    for(i = 0; i < 5; i ++){
-        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
-        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
-        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
-        boxes[i].no_left_wall = 1;
-    }
-    for(i = 5; i < 10; i ++){
-        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
-        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
-        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
-        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
-    }
-    for(i = 10; i < 15; i ++){
-        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
-        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
-        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
-    }
-    for(i = 15; i < 20; i ++){
-        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
-        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
-        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
-    }
-    for(i = 20; i < 25; i ++){
-        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
-        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
-        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
-        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
-    }
-    for(i = 25; i < 30; i ++){
-        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
-        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
-        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
-        boxes[i].no_right_wall = 1;
-    }
+//    for(i = 0; i < 30; i ++){
+//        boxes[i].no_left_wall = 0;
+//        boxes[i].no_right_wall = 0;
+//
+//    }
+//    for(i = 0; i < 5; i ++){
+//        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
+//        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
+//        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
+//        boxes[i].no_left_wall = 1;
+//    }
+//    for(i = 5; i < 10; i ++){
+//        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
+//        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
+//        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
+//        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
+//    }
+//    for(i = 10; i < 15; i ++){
+//        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
+//        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
+//        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+//        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
+//    }
+//    for(i = 15; i < 20; i ++){
+//        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
+//        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
+//        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+//        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
+//    }
+//    for(i = 20; i < 25; i ++){
+//        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
+//        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
+//        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
+//        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
+//    }
+//    for(i = 25; i < 30; i ++){
+//        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
+//        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
+//        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
+//        boxes[i].no_right_wall = 1;
+//    }
     // flag pins
     GPIO_setDir(IMAGE_TO_LINUX_BANK, IMAGE_TO_LINUX_FLAG, GPIO_OUTPUT);
     GPIO_setDir(OPTITRACKDATA_FROM_LINUX_BANK, OPTITRACKDATA_FROM_LINUX_FLAG, GPIO_OUTPUT);
@@ -1112,17 +1112,17 @@ void RobotControl(void) {
 
     //receive vision data
     if (new_coordata == 1) {
-        if (colorstate == 1) {
+//        if (colorstate == 1) {
             blue_center_x = blue_object_x;
             blue_center_y = blue_object_y;
             blue_area = blue_numpels;
-            new_coordata = 0;
-        }else {
+            //new_coordata = 0;
+//        }else {
             orange_center_x = orange_object_x;
             orange_center_y = orange_object_y;
             orange_area = orange_numpels;
             new_coordata = 0;
-        }
+//        }
     }
 
     int minLADARfrontright = LADARdistance[29];
@@ -1314,10 +1314,10 @@ void RobotControl(void) {
                 LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
             }
             break;
-        case 1:
+        case 1: // Orange Weed Locator
             if ((timecount%250)==0){
                 LCDPrintfLine(1,"RBST %d",robotstate);
-                LCDPrintfLine(2,"Bx: %.2f By: %.2f",blue_posx,blue_posy);
+                LCDPrintfLine(2,"Bx: %.2f By: %.2f",orange_posx,orange_posy);
             }
             break;
         case 2:
@@ -1332,28 +1332,28 @@ void RobotControl(void) {
                 LCDPrintfLine(2,"");
             }
             break;
-        case 4:
+        case 4: // Blue Weed Locator
             if ((timecount%250)==0){
                 LCDPrintfLine(1,"Case %d c: %d",(int)robotstate,blue_found);
                 LCDPrintfLine(2,"Bx: %.2f By: %.2f",blue_posx,blue_posy);
             }
             break;
-        case 5:
+        case 5: // Weed Counter
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"Case %d",(int)robotstate);
+                LCDPrintfLine(2,"B: %d O: %d",(int)blue_found,(int)orange_found);
             }
             break;
         case 6:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"%d BA %d OA %d",(int)robotstate,blue_area,orange_area);
+                LCDPrintfLine(2,"B: %d O: %d",(int)blue_found,(int)orange_found);
             }
             break;
         case 7:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"%d TO %d OA %d OF %d",(int)robotstate,to_orange,orange_area,(int)orange_found);
+                LCDPrintfLine(2,"TB %d BA %d BF %d",to_blue,blue_area,(int)blue_found);
             }
             break;
         case 8:
@@ -1509,14 +1509,16 @@ void RobotControl(void) {
         //                robotstate = 2;
         //            }
         case 2:
-            if (blue_area>120 && to_blue == 0){
-                robotstate = 5;
+            if (blue_area>60 && to_blue == 0){
                 to_blue = 1;
+                robotstate = 5;
+                break;
+            }else if (orange_area>60 && to_orange == 0){
+                to_orange = 1;
+                robotstate = 7;
                 break;
             }
-
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5))
-            {
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     statePos = (statePos+1)%robotdestSize;
@@ -1525,19 +1527,21 @@ void RobotControl(void) {
                 //                if(ROBOTps.y < 0){
                 //                    robotstate = 1;
                 //                }
-
             }
             break;
 
         case 3://spraying weeds for 1 s
             vref = 0;
             turn = 0;
-            if(spraying<5000){
+            if(spraying<1000){
                 spraying ++;
             }else{
                 spraying = 0;
                 robotstate = 2;//done spraying, going to next setpoint
                 to_blue = 0;
+                to_orange = 0;
+                blue_area = 0;
+                orange_area = 0;
             }
             break;
 
@@ -1570,6 +1574,39 @@ void RobotControl(void) {
             if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5) && to_blue == 1){
                 robotstate = 3;//wait for 1 s
             }
+            break;
+
+        case 7://turning to face orange straight ahead
+            colorerror = 0-orange_center_x;
+            turn = KpLight*colorerror;
+            if (abs(orange_center_x)<20){
+                float ft = (p1*(orange_center_y)*(orange_center_y)*(orange_center_y)) + (p2*(orange_center_y)*(orange_center_y))+(p3*(orange_center_y))+p4;
+                orange_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+                orange_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+                if(!compare_pos(orange_posx,orange_posy)){
+                    to_orange = 1;
+                    robotstate = 8;
+                    orangex[orange_found] = orange_posx;
+                    orangey[orange_found] = orange_posy;
+                    orange_found ++;
+                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+                    sharedorangex = orange_posx;
+                    sharedorangey = orange_posy;
+                    newWeed = 1;
+                }else{
+                    to_orange = 0;
+                    robotstate = 2;
+                }
+            }
+            break;
+
+        case 8:// move to x,y assuming no obstacle
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
+                robotstate = 3;//wait for 1 s
+            }
+
+
+            break;
 
 
         }
