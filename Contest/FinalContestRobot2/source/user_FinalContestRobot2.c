@@ -1,5 +1,5 @@
 /*
- *  ======== main.c ========
+ *  ======== main.c ========ASDFew
  */
 #include <math.h>
 #include <stdio.h>
@@ -67,32 +67,12 @@ extern float adcB5;  // ADC B5 - USONIC2
 extern float adcA6;  // ADC A6 - Analog IR3
 extern float adcA7;  // ADC A7 - Analog IR4
 extern float compass;
-extern float switchstate;
-extern int flagVision;
-extern int new_coordata;
-extern int colorstate;
-
-extern float green_object_x;
-extern float green_object_y;
-extern int green_numpels;
-
-extern float blue_object_x;
-extern float blue_object_y;
-extern int blue_numpels;
-
-float blue_center_x = 0;
-float blue_center_y = 0;
-int blue_area = 0;
-
-float green_center_x = 0;
-float green_center_y = 0;
-int green_area = 0;
 
 extern sharedmemstruct *ptrshrdmem;
 
 float vref = 0;
 float turn = 0;
-int robotstate = 0;
+int robotstate = 2;
 int tskcount = 0;
 char fromLinuxstring[LINUX_COMSIZE + 2];
 char toLinuxstring[LINUX_COMSIZE + 2];
@@ -116,7 +96,7 @@ typedef struct edges_tag{
     int found_flag;
 }edges;
 typedef struct box_tag{
-    edges edge[4];
+    edges *edge[4];
     int no_left_wall;
     int no_right_wall;
 }box;
@@ -129,30 +109,31 @@ float newturn = 0;
 int firsttime = 1;
 extern sharedmemstruct *ptrshrdmem;
 
-float x_pred[3][1] = {{0},{0},{0}};					// predicted state
+float x_pred[3][1] = {{0},{0},{0}};                 // predicted state
 
 //more kalman vars
-float B[3][2] = {{1,0},{1,0},{0,1}};			// control input model
-float u[2][1] = {{0},{0}};			// control input in terms of velocity and angular velocity
-float Bu[3][1] = {{0},{0},{0}};	// matrix multiplication of B and u
-float z[3][1];							// state measurement
-float eye3[3][3] = {{1,0,0},{0,1,0},{0,0,1}};	// 3x3 identity matrix
-float K[3][3] = {{1,0,0},{0,1,0},{0,0,1}};		// optimal Kalman gain
+//more kalman vars
+float B[3][2] = {{1,0},{1,0},{0,1}};            // control input model
+float u[2][1] = {{0},{0}};          // control input in terms of velocity and angular velocity
+float Bu[3][1] = {{0},{0},{0}}; // matrix multiplication of B and u
+float z[3][1];                          // state measurement
+float eye3[3][3] = {{1,0,0},{0,1,0},{0,0,1}};   // 3x3 identity matrix
+float K[3][3] = {{1,0,0},{0,1,0},{0,0,1}};      // optimal Kalman gain
 #define ProcUncert 0.0001
 #define CovScalar 10
 float Q[3][3] = {{ProcUncert,0,ProcUncert/CovScalar},
                  {0,ProcUncert,ProcUncert/CovScalar},
-                 {ProcUncert/CovScalar,ProcUncert/CovScalar,ProcUncert}};	// process noise (covariance of encoders and gyro)
+                 {ProcUncert/CovScalar,ProcUncert/CovScalar,ProcUncert}};   // process noise (covariance of encoders and gyro)
 #define MeasUncert 1
 float R[3][3] = {{MeasUncert,0,MeasUncert/CovScalar},
                  {0,MeasUncert,MeasUncert/CovScalar},
-                 {MeasUncert/CovScalar,MeasUncert/CovScalar,MeasUncert}};	// measurement noise (covariance of LADAR)
-float S[3][3] = {{1,0,0},{0,1,0},{0,0,1}};	// innovation covariance
-float S_inv[3][3] = {{1,0,0},{0,1,0},{0,0,1}};	// innovation covariance matrix inverse
-float P_pred[3][3] = {{1,0,0},{0,1,0},{0,0,1}};	// predicted covariance (measure of uncertainty for current position)
-float temp_3x3[3][3];				// intermediate storage
-float temp_3x1[3][1];				// intermediate storage
-float ytilde[3][1];					// difference between predictions
+                 {MeasUncert/CovScalar,MeasUncert/CovScalar,MeasUncert}};   // measurement noise (covariance of LADAR)
+float S[3][3] = {{1,0,0},{0,1,0},{0,0,1}};  // innovation covariance
+float S_inv[3][3] = {{1,0,0},{0,1,0},{0,0,1}};  // innovation covariance matrix inverse
+float P_pred[3][3] = {{1,0,0},{0,1,0},{0,0,1}}; // predicted covariance (measure of uncertainty for current position)
+float temp_3x3[3][3];               // intermediate storage
+float temp_3x1[3][1];               // intermediate storage
+float ytilde[3][1];                 // difference between predictions
 
 // deadreckoning
 float vel1 = 0,vel2 = 0;
@@ -173,12 +154,12 @@ float gyro_x = 0,gyro_y = 0;
 float gyro4x_gain = 1;
 extern float mydist;
 
-int statePos = 0;	// index into robotdest
-int robotdestSize = 8;	// number of positions to use out of robotdest
-pose robotdest[8];	// array of waypoints for the robot
+int statePos = 0;   // index into robotdest
+int robotdestSize = 8;  // number of positions to use out of robotdest
+pose robotdest[8];  // array of waypoints for the robot
 
 extern float newLADARdistance[LADAR_MAX_DATA_SIZE];  //in mm
-extern float newLADARangle[LADAR_MAX_DATA_SIZE];		// in degrees
+extern float newLADARangle[LADAR_MAX_DATA_SIZE];        // in degrees
 float LADARdistance[LADAR_MAX_DATA_SIZE];
 float LADARangle[LADAR_MAX_DATA_SIZE];
 extern pose ROBOTps;
@@ -203,7 +184,7 @@ volatile int temp_trackableID = -1;
 int trackableID = -1;
 int errorcheck = 1;
 
-int RobotState = 1;
+//int RobotState = 2;
 float Kp_obs = 0.02;
 float FrontLeft_error = 0;
 float FrontRight_error = 0;
@@ -265,6 +246,13 @@ float KpGyro = 400;
 float data1 = 0.0;
 float data2 = 0.0;
 float data3 = 0.0;
+//send blue weed x,y
+float data4 = 0.0;
+float data5 = 14.0;
+//send orange weed x,y
+float data6 = 0.0;
+float data7 = 14.0;
+float newWeed = 0.0; // New Weed flag
 
 float p1_old = 0;
 float p2_old = 0;
@@ -292,6 +280,57 @@ float newROBOTpsx = 0.0;
 float newROBOTpsy = 0.0;
 float sharedROBOTpsx = 0.0;
 float sharedROBOTpsy = 0.0;
+
+//weed detection
+extern float switchstate;
+extern int flagVision;
+extern int new_coordata;
+extern int colorstate;
+int orange_found = 0;
+int blue_found = 0;
+int spraying = 0;
+extern float orange_object_x;
+extern float orange_object_y;
+extern int orange_numpels;
+
+extern float blue_object_x;
+extern float blue_object_y;
+extern int blue_numpels;
+
+float blue_center_x = 0;
+float blue_center_y = 0;
+int blue_area = 0;
+int i = 0;
+
+float orange_center_x = 0;
+float orange_center_y = 0;
+int orange_area = 0;
+
+int to_blue = 0;
+float blue_posx = 0.0;
+float blue_posy = 0.0;
+float sharedbluex = 0.0;
+float sharedbluey = 0.0;
+
+int to_orange = 0;
+float orange_posx = 0.0;
+float orange_posy = 0.0;
+float sharedorangex = 0.0;
+float sharedorangey = 0.0;
+
+float p1 = 2.0062e-05;
+float p2 = 0.0033488;
+float p3 = 0.20483;
+float p4 = 6.0104;
+
+float colorerror = 0;
+float KpLight = 0.05;
+
+float bluex[3];
+float bluey[3];
+
+float orangex[3];
+float orangey[3];
 
 char map[176] =         //16x11
 {   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -332,6 +371,28 @@ char originalMap[176] =
 
 edges obs[57];
 box boxes[30];
+
+void add_dest(float xpos, float ypos, pose arr[]){
+    robotdestSize++;
+    for(i=robotdestSize; i>=statePos; i--)
+    {
+        arr[i] = arr[i-1];
+    }
+
+    /* Insert new element at given position and increment size */
+    arr[statePos].x = xpos;
+    arr[statePos].y = ypos;
+
+}
+
+int compare_pos(float x, float y){//return 1 if found; 0 not found
+    for(i = 0; i<3; i++){
+        if (abs(bluex[i]-x)<0.5 && (abs(bluey[i]-y)<0.5) ) return 1;
+        if (abs(orangex[i]-x)<0.5 && (abs(orangey[i]-y)<0.5) ) return 1;
+    }
+    return 0;
+}
+
 int myRound(float var) {
 
     if ( ( fabs(var) - floorf( fabs(var) ) ) > 0.5) {
@@ -539,8 +600,19 @@ void ComWithLinux(void) {
                     newROBOTpsy = sharedROBOTpsy;
                     newLVData = 0;
                 }
+                if(newWeed == 1){
+                    if(colorstate == 1){
+                        data4 = sharedbluex;
+                        data5 = sharedbluey;
+                    }
+                    if(colorstate == 0){
+                        data6 = sharedorangex;
+                        data7 = sharedorangey;
+                    }
+                    newWeed = 0;
+                }
                 // Default
-                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f",(newROBOTpsx+10),(13-newROBOTpsy),data1, data2);
+                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f",(newROBOTpsx+10),(13-newROBOTpsy),data1,data2,data3,(data4+10)*40,(13-data5)*40,(data6+10)*40,(13-data7)*40);
                 // you would do something like this
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f",var1,var2,var3,var4);
 
@@ -704,7 +776,7 @@ Int main()
 
     // ROBOTps will be updated by Optitrack during gyro calibration
     // TODO: specify the starting position of the robot
-    ROBOTps.x = 0;			//the estimate in array form (useful for matrix operations)
+    ROBOTps.x = 0;          //the estimate in array form (useful for matrix operations)
     ROBOTps.y = 0;
     ROBOTps.theta = 0;  // was -PI: need to flip OT ground plane to fix this
     x_pred[0][0] = ROBOTps.x; //estimate in structure form (useful elsewhere)
@@ -712,8 +784,8 @@ Int main()
     x_pred[2][0] = ROBOTps.theta;
 
     // TODO: defined destinations that moves the robot around and outside the course
-    robotdest[0].x = 0; 	robotdest[0].y = 0;
-    robotdest[1].x = -5;	robotdest[1].y = 9;
+    robotdest[0].x = 0;     robotdest[0].y = 0;
+    robotdest[1].x = -5;    robotdest[1].y = 9;
     robotdest[2].x = 5;     robotdest[2].y = 9;
     robotdest[3].x = 0;    robotdest[3].y = 0;
     robotdest[4].x = 5;     robotdest[4].y = 9;
@@ -721,14 +793,14 @@ Int main()
     robotdest[6].x = 5;     robotdest[6].y = 9;
     robotdest[7].x = -5;    robotdest[7].y = 9;
     //    //middle of bottom
-    //    robotdest[2].x = 0;		robotdest[2].y = 5;
+    //    robotdest[2].x = 0;       robotdest[2].y = 5;
     //    //outside the course
-    //    robotdest[3].x = 4;		robotdest[3].y = 10;
+    //    robotdest[3].x = 4;       robotdest[3].y = 10;
     //    //back to middle
-    //    robotdest[4].x = 0;		robotdest[4].y =5;
-    //    robotdest[5].x = -4;		robotdest[5].y = -10;
-    //    robotdest[6].x =0;		robotdest[6].y = 5;
-    //    robotdest[7].x = 4;		robotdest[7].y = -10;
+    //    robotdest[4].x = 0;       robotdest[4].y =5;
+    //    robotdest[5].x = -4;      robotdest[5].y = -10;
+    //    robotdest[6].x =0;        robotdest[6].y = 5;
+    //    robotdest[7].x = 4;       robotdest[7].y = -10;
     for(i=0; i<6; i++){
         obs[i].x = -5 + 2*i;
         obs[i].y = 10;
@@ -938,41 +1010,42 @@ Int main()
     for(i = 0; i < 30; i ++){
         boxes[i].no_left_wall = 0;
         boxes[i].no_right_wall = 0;
+
     }
     for(i = 0; i < 5; i ++){
-        boxes[i].edge[0] = obs[11*i]; // top, boxes go down from top left to bottom left and then shift over a column
-        boxes[i].edge[1] = obs[6 + 11*i]; // right
-        boxes[i].edge[2] = obs[11 + 11*i]; // bottom
+        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
+        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
+        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
         boxes[i].no_left_wall = 1;
     }
     for(i = 5; i < 10; i ++){
-        boxes[i].edge[0] = obs[1 + 11*(i%5)];
-        boxes[i].edge[1] = obs[7 + 11*(i%5)];
-        boxes[i].edge[2] = obs[12 + 11*(i%5)];
-        boxes[i].edge[3] = obs[6 + 11*(i%5)];
+        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
     }
     for(i = 10; i < 15; i ++){
-        boxes[i].edge[0] = obs[2 + 11*(i%5)];
-        boxes[i].edge[1] = obs[8 + 11*(i%5)];
-        boxes[i].edge[2] = obs[13 + 11*(i%5)];
-        boxes[i].edge[3] = obs[7 + 11*(i%5)];
+        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
     }
     for(i = 15; i < 20; i ++){
-        boxes[i].edge[0] = obs[3 + 11*(i%5)];
-        boxes[i].edge[1] = obs[9 + 11*(i%5)];
-        boxes[i].edge[2] = obs[13 + 11*(i%5)];
-        boxes[i].edge[3] = obs[8 + 11*(i%5)];
+        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
     }
     for(i = 20; i < 25; i ++){
-        boxes[i].edge[0] = obs[4 + 11*(i%5)];
-        boxes[i].edge[1] = obs[10 + 11*(i%5)];
-        boxes[i].edge[2] = obs[14 + 11*(i%5)];
-        boxes[i].edge[3] = obs[9 + 11*(i%5)];
+        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
     }
     for(i = 25; i < 30; i ++){
-        boxes[i].edge[0] = obs[5 + 11*(i%5)];
-        boxes[i].edge[2] = obs[15 + 11*(i%5)];
-        boxes[i].edge[3] = obs[10 + 11*(i%5)];
+        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
         boxes[i].no_right_wall = 1;
     }
     // flag pins
@@ -1033,6 +1106,22 @@ void RobotControl(void) {
         default:
             whichled = 0;
             break;
+        }
+    }
+
+
+    //receive vision data
+    if (new_coordata == 1) {
+        if (colorstate == 1) {
+            blue_center_x = blue_object_x;
+            blue_center_y = blue_object_y;
+            blue_area = blue_numpels;
+            new_coordata = 0;
+        }else {
+            orange_center_x = orange_object_x;
+            orange_center_y = orange_object_y;
+            orange_area = orange_numpels;
+            new_coordata = 0;
         }
     }
 
@@ -1113,11 +1202,11 @@ void RobotControl(void) {
         gyro_radians = (gyro_angle * (PI/180.0)*400.0*gyro4x_gain);
 
         // Kalman filtering
-        vel1 = (enc1 - enc1old)/(193.0*0.001);	// calculate actual velocities
+        vel1 = (enc1 - enc1old)/(193.0*0.001);  // calculate actual velocities
         vel2 = (enc2 - enc2old)/(193.0*0.001);
-        if (fabsf(vel1) > 10.0) vel1 = vel1old;	// check for encoder roll-over should never happen
+        if (fabsf(vel1) > 10.0) vel1 = vel1old; // check for encoder roll-over should never happen
         if (fabsf(vel2) > 10.0) vel2 = vel2old;
-        enc1old = enc1;	// save past values
+        enc1old = enc1; // save past values
         enc2old = enc2;
         vel1old = vel1;
         vel2old = vel2;
@@ -1126,17 +1215,17 @@ void RobotControl(void) {
         B[0][0] = cosf(ROBOTps.theta)*0.001;
         B[1][0] = sinf(ROBOTps.theta)*0.001;
         B[2][1] = 0.001;
-        u[0][0] = 0.5*(vel1 + vel2);	// linear velocity of robot
-        u[1][0] = (gyro-gyro_zero)*(PI/180.0)*400.0*gyro4x_gain;	// angular velocity in rad/s (negative for right hand angle)
+        u[0][0] = 0.5*(vel1 + vel2);    // linear velocity of robot
+        u[1][0] = (gyro-gyro_zero)*(PI/180.0)*400.0*gyro4x_gain;    // angular velocity in rad/s (negative for right hand angle)
 
         // Step 1: predict the state and estimate covariance
-        Matrix3x2_Mult(B, u, Bu);					// Bu = B*u
+        Matrix3x2_Mult(B, u, Bu);                   // Bu = B*u
         Matrix3x1_Add(x_pred, Bu, x_pred, 1.0, 1.0); // x_pred = x_pred(old) + Bu
-        Matrix3x3_Add(P_pred, Q, P_pred, 1.0, 1.0);	// P_pred = P_pred(old) + Q
+        Matrix3x3_Add(P_pred, Q, P_pred, 1.0, 1.0); // P_pred = P_pred(old) + Q
         // Step 2: if there is a new measurement, then update the state
         if (1 == newOPTITRACKpose) {
             newOPTITRACKpose = 0;
-            z[0][0] = OPTITRACKps.x;	// take in the LADAR measurement
+            z[0][0] = OPTITRACKps.x;    // take in the LADAR measurement
             z[1][0] = OPTITRACKps.y;
             // fix for OptiTrack problem at 180 degrees
             if (cosf(ROBOTps.theta) < -0.99) {
@@ -1146,12 +1235,12 @@ void RobotControl(void) {
                 z[2][0] = OPTITRACKps.theta;
             }
             // Step 2a: calculate the innovation/measurement residual, ytilde
-            Matrix3x1_Add(z, x_pred, ytilde, 1.0, -1.0);	// ytilde = z-x_pred
+            Matrix3x1_Add(z, x_pred, ytilde, 1.0, -1.0);    // ytilde = z-x_pred
             // Step 2b: calculate innovation covariance, S
-            Matrix3x3_Add(P_pred, R, S, 1.0, 1.0);							// S = P_pred + R
+            Matrix3x3_Add(P_pred, R, S, 1.0, 1.0);                          // S = P_pred + R
             // Step 2c: calculate the optimal Kalman gain, K
             Matrix3x3_Invert(S, S_inv);
-            Matrix3x3_Mult(P_pred,  S_inv, K);								// K = P_pred*(S^-1)
+            Matrix3x3_Mult(P_pred,  S_inv, K);                              // K = P_pred*(S^-1)
             // Step 2d: update the state estimate x_pred = x_pred(old) + K*ytilde
             Matrix3x1_Mult(K, ytilde, temp_3x1);
             Matrix3x1_Add(x_pred, temp_3x1, x_pred, 1.0, 1.0);
@@ -1167,7 +1256,7 @@ void RobotControl(void) {
             }
 
 
-        }	// end of correction step
+        }   // end of correction step
 
         // set ROBOTps to the updated and corrected Kalman values.
         ROBOTps.x = x_pred[0][0];
@@ -1221,20 +1310,20 @@ void RobotControl(void) {
         switch((int)(switchstate)) {
         case 0:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),RobotState);
+                LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),robotstate);
                 LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
             }
             break;
         case 1:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case %d",(int)(switchstate));
-                LCDPrintfLine(2,"V: %.2f T: %.2f",vref,turn);
+                LCDPrintfLine(1,"RBST %d",robotstate);
+                LCDPrintfLine(2,"Bx: %.2f By: %.2f",blue_posx,blue_posy);
             }
             break;
         case 2:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case %d",(int)(switchstate));
-                LCDPrintfLine(2,"x: %.1f y: %.1f",ROBOTps.x,ROBOTps.y);
+                LCDPrintfLine(1,"Case %d",(int)robotstate);
+                LCDPrintfLine(2,"x: %.1f y: %.1f",robotdest[statePos].x,robotdest[statePos].y);
             }
             break;
         case 3:
@@ -1245,8 +1334,8 @@ void RobotControl(void) {
             break;
         case 4:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"Case %d c: %d",(int)robotstate,blue_found);
+                LCDPrintfLine(2,"Bx: %.2f By: %.2f",blue_posx,blue_posy);
             }
             break;
         case 5:
@@ -1357,9 +1446,7 @@ void RobotControl(void) {
                         map[obs[i].idx3] = 'x';
                         obs[i].sendLV = 1;
                         obs[i].found_flag = 1;
-                        if(orientation = 0 ){
-
-                        }
+                        vertical_edge_box_detector(i);
                         Semaphore_post(SEM_startAstar);
                     }
                     if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx1 == 400)){
@@ -1367,6 +1454,7 @@ void RobotControl(void) {
                         map[obs[i].idx3] = 'x';
                         obs[i].sendLV = 1;
                         obs[i].found_flag = 1;
+                        horizontal_edge_box_detector(i);
                         Semaphore_post(SEM_startAstar);
                     }
                     if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx3 == 400)){
@@ -1374,6 +1462,7 @@ void RobotControl(void) {
                         map[obs[i].idx2] = 'x';
                         obs[i].sendLV = 1;
                         obs[i].found_flag = 1;
+                        horizontal_edge_box_detector(i);
                         Semaphore_post(SEM_startAstar);
                     }
                     if((obs[i].tally > 4) && (obs[i].orientation == 0) && !(map[obs[i].idx2] == 'x')){
@@ -1382,6 +1471,7 @@ void RobotControl(void) {
                         map[obs[i].idx3] = 'x';
                         obs[i].sendLV = 1;
                         obs[i].found_flag = 1;
+                        horizontal_edge_box_detector(i);
                         Semaphore_post(SEM_startAstar);
                     }
                 }
@@ -1410,27 +1500,80 @@ void RobotControl(void) {
 
         //        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
         //        { statePos = (statePos+1)%robotdestSize; }
+
         switch(robotstate){
-        case 1:
-                if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
-                { statePos = (statePos+1)%robotdestSize; }
-                if(ROBOTps.y >= 0){
-                    robotstate = 2;
-                }
+        //        case 1:
+        //            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
+        //            { statePos = (statePos+1)%robotdestSize; }
+        //            if(ROBOTps.y >= 0){
+        //                robotstate = 2;
+        //            }
         case 2:
-        if( xy_control(&vref, &turn, 2.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5))
-        {
-            pathPos++;
-            if (pathPos == pathLen) {
-                statePos = (statePos+1)%robotdestSize;
-                Semaphore_post(SEM_startAstar);
-            }
-            if(ROBOTps.y < 0){
-                robotstate = 1;
+            if (blue_area>120 && to_blue == 0){
+                robotstate = 5;
+                to_blue = 1;
+                break;
             }
 
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5))
+            {
+                pathPos++;
+                if (pathPos == pathLen) {
+                    statePos = (statePos+1)%robotdestSize;
+                    Semaphore_post(SEM_startAstar);
+                }
+                //                if(ROBOTps.y < 0){
+                //                    robotstate = 1;
+                //                }
+
+            }
+            break;
+
+        case 3://spraying weeds for 1 s
+            vref = 0;
+            turn = 0;
+            if(spraying<5000){
+                spraying ++;
+            }else{
+                spraying = 0;
+                robotstate = 2;//done spraying, going to next setpoint
+                to_blue = 0;
+            }
+            break;
+
+        case 5://turning to face blue straight ahead
+            colorerror = 0-blue_center_x;
+            turn = KpLight*colorerror;
+            if (abs(blue_center_x)<20){
+                float ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
+                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+                if(!compare_pos(blue_posx,blue_posy)){
+                    to_blue = 1;
+                    robotstate = 6;
+                    bluex[blue_found] = blue_posx;
+                    bluey[blue_found] = blue_posy;
+                    blue_found ++;
+                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+                    sharedbluex = blue_posx;
+                    sharedbluey = blue_posy;
+                    newWeed = 1;
+                }else{
+                    to_blue = 0;
+                    robotstate = 2;
+                }
+
+            }
+            break;
+
+        case 6:// move to x,y assuming no obstacle
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5) && to_blue == 1){
+                robotstate = 3;//wait for 1 s
+            }
+
+
         }
-        }
+
         // obstacle avoidance maybe use ultrasonic sensors
 
         //
@@ -1481,10 +1624,6 @@ void RobotControl(void) {
         //        }//code worked before tunnel case
         //    }
 
-
-        if (vref<0.5){
-            vref = 0.5;
-        }
 
         if (newnavdata) {
             DSP_Float2 = new_DSP_Float2;
@@ -1621,5 +1760,197 @@ pose UpdateOptitrackStates(pose localROBOTps, int * flag) {
     }
     return localOPTITRACKps;
 }
-
-
+void horizontal_edge_box_detector(int i){
+    int index;
+    int j;
+    index = i;
+    if(ROBOTps.y > obs[index].y){
+       for(i = 0; i < 30; i ++){
+            if((boxes[i].edge[0]->x == obs[index].x) && (boxes[i].edge[0]->y == obs[index].y)){
+                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
+                    for(j = 0; j < 4; j ++){
+                        map[boxes[i].edge[j]->idx1] = 'x';
+                        map[boxes[i].edge[j]->idx2] = 'x';
+                        map[boxes[i].edge[j]->idx3] = 'x';
+                        boxes[i].edge[j]->sendLV = 1;
+                        boxes[i].edge[j]->found_flag = 1;
+                    }
+                }
+                else if(boxes[i].no_left_wall == 1){
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[1]->idx1] = 'x';
+                    map[boxes[i].edge[1]->idx2] = 'x';
+                    map[boxes[i].edge[1]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[1]->sendLV = 1;
+                    boxes[i].edge[1]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                }
+                else{
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[3]->idx1] = 'x';
+                    map[boxes[i].edge[3]->idx2] = 'x';
+                    map[boxes[i].edge[3]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                    boxes[i].edge[3]->sendLV = 1;
+                    boxes[i].edge[3]->found_flag = 1;
+                }
+                break;
+            }
+        }
+    }
+    if(ROBOTps.y < obs[index].y){
+       for(i = 0; i < 30; i ++){
+            if((boxes[i].edge[2]->x == obs[index].x) && (boxes[i].edge[2]->y == obs[index].y)){
+                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
+                    for(j = 0; j < 4; j ++){
+                        map[boxes[i].edge[j]->idx1] = 'x';
+                        map[boxes[i].edge[j]->idx2] = 'x';
+                        map[boxes[i].edge[j]->idx3] = 'x';
+                        boxes[i].edge[j]->sendLV = 1;
+                        boxes[i].edge[j]->found_flag = 1;
+                    }
+                }
+                else if(boxes[i].no_left_wall == 1){
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[1]->idx1] = 'x';
+                    map[boxes[i].edge[1]->idx2] = 'x';
+                    map[boxes[i].edge[1]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[1]->sendLV = 1;
+                    boxes[i].edge[1]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                }
+                else{
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[3]->idx1] = 'x';
+                    map[boxes[i].edge[3]->idx2] = 'x';
+                    map[boxes[i].edge[3]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                    boxes[i].edge[3]->sendLV = 1;
+                    boxes[i].edge[3]->found_flag = 1;
+                }
+                break;
+            }
+        }
+    }
+}
+void vertical_edge_box_detector(int i){
+    int index;
+    index = i;
+    int j;
+    if(ROBOTps.x > obs[index].x){
+       for(i = 0; i < 30; i ++){
+            if((boxes[i].edge[1]->x == obs[index].x) && (boxes[i].edge[1]->y == obs[index].y)){
+                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
+                    for(j = 0; j < 4; j ++){
+                        map[boxes[i].edge[j]->idx1] = 'x';
+                        map[boxes[i].edge[j]->idx2] = 'x';
+                        map[boxes[i].edge[j]->idx3] = 'x';
+                        boxes[i].edge[j]->sendLV = 1;
+                        boxes[i].edge[j]->found_flag = 1;
+                    }
+                }
+                else if(boxes[i].no_left_wall == 1){
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[1]->idx1] = 'x';
+                    map[boxes[i].edge[1]->idx2] = 'x';
+                    map[boxes[i].edge[1]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[1]->sendLV = 1;
+                    boxes[i].edge[1]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                }
+                else{
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[3]->idx1] = 'x';
+                    map[boxes[i].edge[3]->idx2] = 'x';
+                    map[boxes[i].edge[3]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                    boxes[i].edge[3]->sendLV = 1;
+                    boxes[i].edge[3]->found_flag = 1;
+                }
+                break;
+            }
+        }
+    }
+    if(ROBOTps.x > obs[index].x){
+       for(i = 0; i < 30; i ++){
+            if((boxes[i].edge[3]->x == obs[index].x) && (boxes[i].edge[3]->y == obs[index].y)){
+                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
+                    for(j = 0; j < 4; j ++){
+                        map[boxes[i].edge[j]->idx1] = 'x';
+                        map[boxes[i].edge[j]->idx2] = 'x';
+                        map[boxes[i].edge[j]->idx3] = 'x';
+                        boxes[i].edge[j]->sendLV = 1;
+                        boxes[i].edge[j]->found_flag = 1;
+                    }
+                }
+                else if(boxes[i].no_left_wall == 1){
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[1]->idx1] = 'x';
+                    map[boxes[i].edge[1]->idx2] = 'x';
+                    map[boxes[i].edge[1]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[1]->sendLV = 1;
+                    boxes[i].edge[1]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                }
+                else{
+                    map[boxes[i].edge[0]->idx2] = 'x';
+                    map[boxes[i].edge[0]->idx3] = 'x';
+                    map[boxes[i].edge[3]->idx1] = 'x';
+                    map[boxes[i].edge[3]->idx2] = 'x';
+                    map[boxes[i].edge[3]->idx3] = 'x';
+                    map[boxes[i].edge[2]->idx2] = 'x';
+                    map[boxes[i].edge[2]->idx3] = 'x';
+                    boxes[i].edge[0]->sendLV = 1;
+                    boxes[i].edge[0]->found_flag = 1;
+                    boxes[i].edge[2]->sendLV = 1;
+                    boxes[i].edge[2]->found_flag = 1;
+                    boxes[i].edge[3]->sendLV = 1;
+                    boxes[i].edge[3]->found_flag = 1;
+                }
+                break;
+            }
+        }
+    }
+}
