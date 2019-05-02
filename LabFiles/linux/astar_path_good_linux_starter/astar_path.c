@@ -451,6 +451,19 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 								printf("\n");
 							}
 							return 1;
+							} else if (astarfoundpath == 2) {
+							myshared->sharedPathLen = 1;
+							myshared->sharedPathRow[0]=endRow; 
+							myshared->sharedPathCol[0]=endCol;
+							printf("\n");
+							printf("\n");
+							printf("\n");
+							printf("No Astar Run because start Position same as end position.\n");
+							printf("\n");
+							printf("\n");
+							printf("\n");
+							
+							return 1;
 						} else {
 							printf("\n\n\nNo Path Found\n\n\n");
 							return 0;
