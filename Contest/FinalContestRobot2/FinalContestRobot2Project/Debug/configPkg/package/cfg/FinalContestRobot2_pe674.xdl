@@ -9,8 +9,8 @@
  */
 
 
--l"C:\decamar2\trunk\Contest\FinalContestRobot2\FinalContestRobot2Project\Debug\configPkg\package\cfg\FinalContestRobot2_pe674.oe674"
--l"C:\decamar2\trunk\Contest\FinalContestRobot2\SYSBIOS\src\sysbios\sysbios.ae674"
+-l"C:\hzhou39_decamar2_ashwina2\SE423Repo\Contest\FinalContestRobot2\FinalContestRobot2Project\Debug\configPkg\package\cfg\FinalContestRobot2_pe674.oe674"
+-l"C:\hzhou39_decamar2_ashwina2\SE423Repo\Contest\FinalContestRobot2\SYSBIOS\src\sysbios\sysbios.ae674"
 -l"C:\CCStudio_v8\bios_6_70_01_03\packages\ti\targets\rts6000\lib\ti.targets.rts6000.ae674"
 -l"C:\CCStudio_v8\bios_6_70_01_03\packages\ti\targets\rts6000\lib\boot.ae674"
 

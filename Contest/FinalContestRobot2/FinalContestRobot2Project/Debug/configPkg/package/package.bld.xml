@@ -7,7 +7,7 @@
         <srcFile name="package/cfg/FinalContestRobot2_pe674.c"/>
     </sources>
     <configscripts>
-        <srcFile name="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"/>
+        <srcFile name="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"/>
     </configscripts>
     <makefiles>
         <srcFile name="package.mak" src="package.bld"/>
@@ -20,12 +20,12 @@
     </makefiles>
     <targets>
         <target name="ti.targets.elf.C674"
-            version="ti.targets.elf.C674{1,0,8.2,2"
-            rawVersion="8.2.2"
+            version="ti.targets.elf.C674{1,0,8.3,3"
+            rawVersion="8.3.3"
             platform="ti.platforms.evmDA830"
             isa="674"
             suffix="e674"
-            rootDir="C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2"
+            rootDir="C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3"
             os="undefined"
             rts="ti.targets.rts6000">
             <model endian="little"
@@ -44,7 +44,7 @@
         isPartial="false"
         xCfgScript="package/cfg/FinalContestRobot2_pe674.cfg"
         xCfgPrefix="package/cfg/FinalContestRobot2_pe674"
-        cfgScript="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
         cfgArgs="null"
         />
     </configurations>
@@ -56,7 +56,7 @@
         profile="debug"
         xCfgScript="package/cfg/FinalContestRobot2_pe674.cfg"
         xCfgPrefix="package/cfg/FinalContestRobot2_pe674"
-        cfgScript="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
+        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
         cfgArgs="null"
         />
     </executables>

@@ -17,11 +17,11 @@ CCOPTS = -mv6740 --abi=eabi -q -mi10 -mo -pdr -pden -pds=238 -pds=880 -pds1110  
 
 BIOS_INC = -I"C:/CCStudio_v8/bios_6_70_01_03/packages/"
 ANNEX_INCS = 
-INCS = $(BIOS_INC) $(ANNEX_INCS) -I"C:/CCStudio_v8/bios_6_70_01_03/packages/" -I"C:/CCStudio_v8/ccsv8/ccs_base/" -I"C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/" -I"../" -I"/packages//"  -IC:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include
+INCS = $(BIOS_INC) $(ANNEX_INCS) -I"C:/CCStudio_v8/bios_6_70_01_03/packages/" -I"C:/CCStudio_v8/ccsv8/ccs_base/" -I"C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/" -I"../" -I"/packages//"  -IC:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/include
 
-CC = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/bin/cl6x -c $(CCOPTS)
-ASM = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/bin/cl6x -c $(CCOPTS)
-AR = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/bin/ar6x rq
+CC = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x -c $(CCOPTS)
+ASM = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x -c $(CCOPTS)
+AR = C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/ar6x rq
 
 DEL = C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/../bin/rm -f
 CP = C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/../bin/cp -f

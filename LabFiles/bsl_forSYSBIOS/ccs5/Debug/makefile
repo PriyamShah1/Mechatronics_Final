@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/CCStudio_v7/ccsv7/tools/compiler/ti-cgt-c6000_8.2.1
+CG_TOOL_ROOT := C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -157,10 +157,10 @@ all: ../../lib/evmomapl138_bsl.lib
 # Tool invocations
 ../../lib/evmomapl138_bsl.lib: $(OBJS)
 ifneq ($(strip $(ORDERED_OBJS)),)
-	@echo 'Building target: $@'
+	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Archiver'
-	"C:/CCStudio_v7/ccsv7/tools/compiler/ti-cgt-c6000_8.2.1/bin/ar6x" r "../../lib/evmomapl138_bsl.lib" $(ORDERED_OBJS)
-	@echo 'Finished building target: $@'
+	"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/ar6x" r "../../lib/evmomapl138_bsl.lib" $(ORDERED_OBJS)
+	@echo 'Finished building target: "$@"'
 	@echo ' '
 endif
 

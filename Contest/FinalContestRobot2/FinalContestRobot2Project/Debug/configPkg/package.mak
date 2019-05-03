@@ -99,7 +99,7 @@ C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/tools/configuro/template/pa
 package.mak: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/tools/configuro/template/package.xs.xdt
 endif
 
-ti.targets.elf.C674.rootDir ?= C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2
+ti.targets.elf.C674.rootDir ?= C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3
 ti.targets.elf.packageBase ?= C:/CCStudio_v8/bios_6_70_01_03/packages/ti/targets/elf/
 .PRECIOUS: $(XDCCFGDIR)/%.oe674
 .PHONY: all,e674 .dlls,e674 .executables,e674 test,e674

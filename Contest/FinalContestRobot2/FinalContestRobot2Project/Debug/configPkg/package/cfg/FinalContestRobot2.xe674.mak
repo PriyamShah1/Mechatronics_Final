@@ -3,7 +3,7 @@
 #  package.bld.  Any modifications to this file will be 
 #  overwritten whenever makefiles are re-generated.
 #
-#  target compatibility key = ti.targets.elf.C674{1,0,8.2,2
+#  target compatibility key = ti.targets.elf.C674{1,0,8.3,3
 #
 FinalContestRobot2.xe674: package/cfg/FinalContestRobot2.xe674.mak
 

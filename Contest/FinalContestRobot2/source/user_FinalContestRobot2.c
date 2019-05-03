@@ -297,8 +297,8 @@ extern float blue_object_x;
 extern float blue_object_y;
 extern int blue_numpels;
 
-float blue_center_x = 0;
-float blue_center_y = 0;
+int blue_center_x = 0;
+int blue_center_y = 0;
 int blue_area = 0;
 int i = 0;
 
@@ -331,8 +331,8 @@ float KpLight = 0.05;
 float bluex[3];
 float bluey[3];
 
-float orangex[3];
-float orangey[3];
+float orangex[10];
+float orangey[10];
 
 char map[176] =         //16x11
 {   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -388,9 +388,9 @@ void add_dest(float xpos, float ypos, pose arr[]){
 }
 
 int compare_pos(float x, float y){//return 1 if found; 0 not found
-    for(i = 0; i<3; i++){
-        if (abs(bluex[i]-x)<0.5 && (abs(bluey[i]-y)<0.5) ) return 1;
-        if (abs(orangex[i]-x)<0.5 && (abs(orangey[i]-y)<0.5) ) return 1;
+    for(i = 0; i<10; i++){
+        if (abs(bluex[i]-x)<1.0 && (abs(bluey[i]-y)<1.0) ) return 1;
+        if (abs(orangex[i]-x)<1.0 && (abs(orangey[i]-y)<1.0) ) return 1;
     }
     return 0;
 }
@@ -1114,17 +1114,17 @@ void RobotControl(void) {
 
     //receive vision data
     if (new_coordata == 1) {
-//        if (colorstate == 1) {
-//            blue_center_x = blue_object_x;
-//            blue_center_y = blue_object_y;
-//            blue_area = blue_numpels;
-            //new_coordata = 0;
-//        }else {
+        if (colorstate == 1) {
+            blue_center_x = (int)blue_object_x;
+            blue_center_y = (int)blue_object_y;
+            blue_area = blue_numpels;
+            new_coordata = 0;
+        }else {
             orange_center_x = orange_object_x;
             orange_center_y = orange_object_y;
             orange_area = orange_numpels;
             new_coordata = 0;
-//        }
+        }
     }
 
     int minLADARfrontright = LADARdistance[29];
@@ -1352,14 +1352,14 @@ void RobotControl(void) {
             break;
         case 12:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"%d FB:%d FO:%d",(int)robotstate, blue_found, orange_found);
+                LCDPrintfLine(2,"%dAB:%d %dAO:%d", to_blue, blue_area, to_orange, orange_area);
             }
             break;
         case 13:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"orange_numpels");
-                LCDPrintfLine(2,"%d",orange_numpels);
+                LCDPrintfLine(1,"%d V:%.2f T:%.2f",(int)robotstate, vref, turn);
+                LCDPrintfLine(2,"%d X:%.1f Y:%.1f OF:%d", to_orange, orange_posx, orange_posy, orange_found);
             }
             break;
         case 14:
@@ -1479,13 +1479,13 @@ void RobotControl(void) {
         //                robotstate = 2;
         //            }
         case 2:
-//            if (blue_area>60 && to_blue == 0){
-//                to_blue = 1;
-//                robotstate = 5;
-//                break;
-            /*}else*/ if (orange_area>60 && to_orange == 0){
-                to_orange = 1;
-                robotstate = 7;
+            if (blue_area>40 && to_blue == 0){
+                to_blue = 1;
+                robotstate = 5;
+                break;
+            //}else if (orange_area>60 && to_orange == 0){
+//                to_orange = 1;
+//                robotstate = 7;
 //                break;
             }else if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
                 pathPos++;
@@ -1512,68 +1512,69 @@ void RobotControl(void) {
             }
             break;
 
-//        case 5://turning to face blue straight ahead
-//            colorerror = 0-blue_center_x;
-//            turn = KpLight*colorerror;
-//            if (abs(blue_center_x)<20){
-//                ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
-//                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
-//                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
-//                if(!compare_pos(blue_posx,blue_posy)){
-//                    to_blue = 1;
-//                    robotstate = 6;
-//                    bluex[blue_found] = blue_posx;
-//                    bluey[blue_found] = blue_posy;
-//                    blue_found ++;
-//                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
-//                    sharedbluex = blue_posx;
-//                    sharedbluey = blue_posy;
-//                    newWeed = 1;
-//                }else{
-//                    to_blue = 0;
-//                    robotstate = 2;
-//                }
-//
-//            }
-//            break;
-//
-//        case 6:// move to x,y Blue Weed assuming no obstacle
-//            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5) && to_blue == 1){
-//                robotstate = 3;//wait for 1 s
-//            }
-//            break;
-
-        case 7://turning to face orange straight ahead
-            colorerror = 0-orange_center_x;
+        case 5://turning to face blue straight ahead
+            colorerror = 0-blue_center_x;
             turn = KpLight*colorerror;
-            if (abs(orange_center_x)<20){
-                float ft = (p1*(orange_center_y)*(orange_center_y)*(orange_center_y)) + (p2*(orange_center_y)*(orange_center_y))+(p3*(orange_center_y))+p4;
-                orange_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
-                orange_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
-                if(!compare_pos(orange_posx,orange_posy)){
-                    to_orange = 1;
-                    robotstate = 8;
-                    orangex[orange_found] = orange_posx;
-                    orangey[orange_found] = orange_posy;
-                    orange_found ++;
+            vref = 0.1;
+            if (abs(blue_center_x)<20){
+                float ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
+                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+                if(!compare_pos(blue_posx,blue_posy)){
+                    to_blue = 1;
+                    robotstate = 6;
+                    bluex[blue_found] = blue_posx;
+                    bluey[blue_found] = blue_posy;
+                    blue_found ++;
                     // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
-                    sharedorangex = orange_posx;
-                    sharedorangey = orange_posy;
+                    sharedbluex = blue_posx;
+                    sharedbluey = blue_posy;
                     newWeed = 1;
                 }else{
-                    to_orange = 0;
+                    to_blue = 0;
                     robotstate = 2;
                 }
+
             }
             break;
 
-        case 8:// move to x,y Orange Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
+        case 6:// move to x,y Blue Weed assuming no obstacle
+            if( xy_control(1, 0, 0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5)){
                 robotstate = 3;//wait for 1 s
             }
-
-
             break;
+
+//        case 7://turning to face orange straight ahead
+//            colorerror = 0-orange_center_x;
+//            turn = KpLight*colorerror;
+//            if (abs(orange_center_x)<20){
+//                float ft = (p1*(orange_center_y)*(orange_center_y)*(orange_center_y)) + (p2*(orange_center_y)*(orange_center_y))+(p3*(orange_center_y))+p4;
+//                orange_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+//                orange_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+//                if(!compare_pos(orange_posx,orange_posy)){
+//                    to_orange = 1;
+//                    robotstate = 8;
+//                    orangex[orange_found] = orange_posx;
+//                    orangey[orange_found] = orange_posy;
+//                    orange_found ++;
+//                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+//                    sharedorangex = orange_posx;
+//                    sharedorangey = orange_posy;
+//                    newWeed = 1;
+//                }else{
+//                    to_orange = 0;
+//                    robotstate = 2;
+//                }
+//            }
+//            break;
+//
+//        case 8:// move to x,y Orange Weed assuming no obstacle
+//            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
+//                robotstate = 3;//wait for 1 s
+//            }
+//
+//
+//            break;
 
 
         }

@@ -5,7 +5,7 @@ digraph configuration {
     concentrate=true;
     compound=true;
     label="\nConfiguration for configPkg/FinalContestRobot2.xe674"
-  node [font=Helvetica, fontsize=14, fontcolor=black];  subgraph cluster0 {label=""; __cfg [label="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg", color=white, fontcolor=blue];
+  node [font=Helvetica, fontsize=14, fontcolor=black];  subgraph cluster0 {label=""; __cfg [label="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg", color=white, fontcolor=blue];
     node [font=Helvetica, fontsize=10];    subgraph cluster1 {
         label="";
         xdc_services_global__top [shape=box,label="xdc.services.global\n1,0,0,0", color=white];
@@ -411,6 +411,6 @@ digraph configuration {
     ti_sysbios_heaps__bot -> ti_targets_elf_C674__1_0_8__1_2 [ltail=cluster37];
     ti_targets_elf_C674__1_0_8__1_2 [shape=record,label="ti.targets.elf.C674|1,0,8.1,2",style=filled, fillcolor=lightgrey];
     ti_sysbios_utils__bot -> ti_targets_elf_C674__1_0_8__1_2 [ltail=cluster38];
-    ti_targets_elf_C674__1_0_8__2_2 [shape=record,label="ti.targets.elf.C674|1,0,8.2,2",style=filled, fillcolor=lightgrey];
-    configPkg__top -> ti_targets_elf_C674__1_0_8__2_2 [ltail=cluster39];
+    ti_targets_elf_C674__1_0_8__3_3 [shape=record,label="ti.targets.elf.C674|1,0,8.3,3",style=filled, fillcolor=lightgrey];
+    configPkg__top -> ti_targets_elf_C674__1_0_8__3_3 [ltail=cluster39];
 }

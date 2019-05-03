@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2
+CG_TOOL_ROOT := C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3
 
 GEN_OPTS__FLAG := --cmd_file="configPkg/compiler.opt"
 GEN_CMDS__FLAG := -l"configPkg/linker.cmd"
@@ -20,7 +20,7 @@ ORDERED_OBJS += \
 "./pru.obj" \
 "./user_FinalContestRobot2.obj" \
 "./user_xy.obj" \
-"C:/decamar2/trunk/LabFiles/bsl_forSYSBIOS/lib/evmomapl138_bsl.lib" \
+"C:/hzhou39_decamar2_ashwina2/SE423Repo/LabFiles/bsl_forSYSBIOS/lib/evmomapl138_bsl.lib" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 
@@ -149,14 +149,14 @@ all: $(OBJS) $(LIB_SRCS) $(GEN_CMDS)
 FinalContestRobot2.out: $(OBJS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=RUNNING_ON_OMAPL138 --define=PHILIPSCOLORLCD --define=omapl138 -g --diag_warning=225 --diag_wrap=off --display_error_number --auto_inline=0 -z -m"FinalContestRobot2.map" --heap_size=0x200 --stack_size=0x2000 -i"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/lib" -i"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include" --reread_libs --define=DSP_CORE=1 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="FinalContestRobot2_linkInfo.xml" --rom_model -o "FinalContestRobot2.out" $(ORDERED_OBJS)
+	"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=RUNNING_ON_OMAPL138 --define=PHILIPSCOLORLCD --define=omapl138 -g --diag_warning=225 --diag_wrap=off --display_error_number --auto_inline=0 -z -m"FinalContestRobot2.map" --heap_size=0x200 --stack_size=0x2000 -i"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --define=DSP_CORE=1 --diag_wrap=off --display_error_number --warn_sections --xml_link_info="FinalContestRobot2_linkInfo.xml" --rom_model -o "FinalContestRobot2.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 FinalContestRobot2.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: C6000 Hex Utility'
-	"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/bin/hex6x"  "..\..\..\..\LabFiles\SYSBIOShex\out2bootbin.cmd" -o "FinalContestRobot2.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  "..\..\..\..\LabFiles\SYSBIOShex\out2bootbin.cmd" -o "FinalContestRobot2.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
