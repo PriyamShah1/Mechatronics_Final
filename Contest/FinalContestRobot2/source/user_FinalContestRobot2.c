@@ -318,6 +318,8 @@ float orange_posy = 0.0;
 float sharedorangex = 0.0;
 float sharedorangey = 0.0;
 
+float ft = 0.0;
+
 float p1 = 2.0062e-05;
 float p2 = 0.0033488;
 float p3 = 0.20483;
@@ -1113,9 +1115,9 @@ void RobotControl(void) {
     //receive vision data
     if (new_coordata == 1) {
 //        if (colorstate == 1) {
-            blue_center_x = blue_object_x;
-            blue_center_y = blue_object_y;
-            blue_area = blue_numpels;
+//            blue_center_x = blue_object_x;
+//            blue_center_y = blue_object_y;
+//            blue_area = blue_numpels;
             //new_coordata = 0;
 //        }else {
             orange_center_x = orange_object_x;
@@ -1273,38 +1275,6 @@ void RobotControl(void) {
             Semaphore_post(SEM_startAstar);
             firsttime = 0;
         }
-        //        if (countdown == 0){
-        //            p1_current = enc1/192.0;
-        //            p2_current = enc2/192.0;
-        //
-        //            v1 = (p1_current-p1_old)/0.001;
-        //            v2 = (p2_current-p2_old)/0.001;
-        //
-        //            //pos = pos + ((v1+v2)/2)*0.001;
-        //            x += ((v1+v2)/2)*0.001 * cos(orientation);
-        //            y += ((v1+v2)/2)*0.001 * sin(orientation);
-        //            p1_old = p1_current;
-        //            p2_old = p2_current;
-        //            old_angular_vel = angular_vel;
-        //        }else{ countdown--;}
-        //
-        //        //correct gyro drift
-        //        if (update_Timer == 0){
-        //            if ((minLADARfront < left_turn_Start_threshold) && (minLADARright < ref_right_wall) && (green_area > 500) ) {
-        //                if ((compass > 3300) || (compass < 300)) { //determine which corner
-        //                    x = 5;
-        //                    y = 11;
-        //                    orientation = PI/2;
-        //                }else if ((compass > 2400) && (compass < 3000)){
-        //                    x = -5;
-        //                    y = 11;
-        //                    orientation = PI;
-        //                }
-        //                update_Timer = 2000;
-        //            }
-        //        }else{
-        //            update_Timer--;
-        //        }
 
         //LCD Printing
         switch((int)(switchstate)) {
@@ -1388,20 +1358,20 @@ void RobotControl(void) {
             break;
         case 13:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"orange_numpels");
+                LCDPrintfLine(2,"%d",orange_numpels);
             }
             break;
         case 14:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"%d X:%.1f Y:%.1f", (int)robotstate, ROBOTps.x, ROBOTps.y);
+                LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_orange, orange_posx, orange_posy, orange_numpels);
             }
             break;
         case 15:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"%d X:%.1f Y:%.1f", (int)robotstate, ROBOTps.x, ROBOTps.y);
+                LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_blue, blue_posx, blue_posy, blue_area);
             }
             break;
         }
@@ -1509,16 +1479,15 @@ void RobotControl(void) {
         //                robotstate = 2;
         //            }
         case 2:
-            if (blue_area>60 && to_blue == 0){
-                to_blue = 1;
-                robotstate = 5;
-                break;
-            }else if (orange_area>60 && to_orange == 0){
+//            if (blue_area>60 && to_blue == 0){
+//                to_blue = 1;
+//                robotstate = 5;
+//                break;
+            /*}else*/ if (orange_area>60 && to_orange == 0){
                 to_orange = 1;
                 robotstate = 7;
-                break;
-            }
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
+//                break;
+            }else if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     statePos = (statePos+1)%robotdestSize;
@@ -1540,41 +1509,39 @@ void RobotControl(void) {
                 robotstate = 2;//done spraying, going to next setpoint
                 to_blue = 0;
                 to_orange = 0;
-                blue_area = 0;
-                orange_area = 0;
             }
             break;
 
-        case 5://turning to face blue straight ahead
-            colorerror = 0-blue_center_x;
-            turn = KpLight*colorerror;
-            if (abs(blue_center_x)<20){
-                float ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
-                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
-                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
-                if(!compare_pos(blue_posx,blue_posy)){
-                    to_blue = 1;
-                    robotstate = 6;
-                    bluex[blue_found] = blue_posx;
-                    bluey[blue_found] = blue_posy;
-                    blue_found ++;
-                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
-                    sharedbluex = blue_posx;
-                    sharedbluey = blue_posy;
-                    newWeed = 1;
-                }else{
-                    to_blue = 0;
-                    robotstate = 2;
-                }
-
-            }
-            break;
-
-        case 6:// move to x,y assuming no obstacle
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5) && to_blue == 1){
-                robotstate = 3;//wait for 1 s
-            }
-            break;
+//        case 5://turning to face blue straight ahead
+//            colorerror = 0-blue_center_x;
+//            turn = KpLight*colorerror;
+//            if (abs(blue_center_x)<20){
+//                ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
+//                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+//                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+//                if(!compare_pos(blue_posx,blue_posy)){
+//                    to_blue = 1;
+//                    robotstate = 6;
+//                    bluex[blue_found] = blue_posx;
+//                    bluey[blue_found] = blue_posy;
+//                    blue_found ++;
+//                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+//                    sharedbluex = blue_posx;
+//                    sharedbluey = blue_posy;
+//                    newWeed = 1;
+//                }else{
+//                    to_blue = 0;
+//                    robotstate = 2;
+//                }
+//
+//            }
+//            break;
+//
+//        case 6:// move to x,y Blue Weed assuming no obstacle
+//            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5) && to_blue == 1){
+//                robotstate = 3;//wait for 1 s
+//            }
+//            break;
 
         case 7://turning to face orange straight ahead
             colorerror = 0-orange_center_x;
@@ -1600,7 +1567,7 @@ void RobotControl(void) {
             }
             break;
 
-        case 8:// move to x,y assuming no obstacle
+        case 8:// move to x,y Orange Weed assuming no obstacle
             if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
                 robotstate = 3;//wait for 1 s
             }
