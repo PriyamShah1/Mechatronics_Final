@@ -1,6 +1,6 @@
 # FIXED
 
-ColorLCD.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/ColorLCD.c
+ColorLCD.obj: C:/decamar2/trunk/Contest/FinalContestRobot2/source/ColorLCD.c
 ColorLCD.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h
 ColorLCD.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h
 ColorLCD.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h
@@ -80,7 +80,7 @@ ColorLCD.obj: ../../include/ColorLCD.h
 ColorLCD.obj: ../../../../LabFiles/sharedmem_com/sharedmem.h
 ColorLCD.obj: ../../include/ladar.h
 
-C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/ColorLCD.c: 
+C:/decamar2/trunk/Contest/FinalContestRobot2/source/ColorLCD.c: 
 C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h: 

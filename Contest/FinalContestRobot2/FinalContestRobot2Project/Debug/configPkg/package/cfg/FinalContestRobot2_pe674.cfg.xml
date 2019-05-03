@@ -4037,7 +4037,7 @@
         <module name="xdc.cfg.SourceDir"
                 used="true"
                 uses="">
-            <feature name="outputDir" type="string" value="C%3A%5Chzhou39_decamar2_ashwina2%5CSE423Repo%5CContest%5CFinalContestRobot2%5CSYSBIOS/src"/>
+            <feature name="outputDir" type="string" value="C%3A%5Cdecamar2%5Ctrunk%5CContest%5CFinalContestRobot2%5CSYSBIOS/src"/>
             <feature name="toBuildDir" type="string" value=".."/>
             <feature name="makefileName" type="string" value="makefile.libs"/>
             <feature name="verbose" type="number" value="2"/>
@@ -7602,7 +7602,7 @@ To see more exception detail, use ROV or set 'ti.sysbios.family.c64p.Exception.e
                 uses="">
         </module>
     </package>
-    <package name="configPkg" version="" repository="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/FinalContestRobot2Project/Debug/">
+    <package name="configPkg" version="" repository="C:/decamar2/trunk/Contest/FinalContestRobot2/FinalContestRobot2Project/Debug/">
     </package>
     <package name="xdc.services.io" version="1,0,0,0" repository="C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/">
         <module name="xdc.services.io.File"

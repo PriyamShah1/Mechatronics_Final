@@ -1,6 +1,6 @@
 # FIXED
 
-COECSL_edma3.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/COECSL_edma3.c
+COECSL_edma3.obj: C:/decamar2/trunk/Contest/FinalContestRobot2/source/COECSL_edma3.c
 COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h
 COECSL_edma3.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h
 COECSL_edma3.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h
@@ -249,7 +249,7 @@ COECSL_edma3.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/runtime/I
 COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__epilogue.h
 COECSL_edma3.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__epilogue.h
 
-C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/COECSL_edma3.c: 
+C:/decamar2/trunk/Contest/FinalContestRobot2/source/COECSL_edma3.c: 
 C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h: 

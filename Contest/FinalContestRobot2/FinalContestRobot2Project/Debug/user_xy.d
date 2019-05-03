@@ -1,6 +1,6 @@
 # FIXED
 
-user_xy.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/user_xy.c
+user_xy.obj: C:/decamar2/trunk/Contest/FinalContestRobot2/source/user_xy.c
 user_xy.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h
 user_xy.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h
 user_xy.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h
@@ -23,7 +23,7 @@ user_xy.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/vect
 user_xy.obj: ../../include/ColorVision.h
 user_xy.obj: ../../include/xy.h
 
-C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/user_xy.c: 
+C:/decamar2/trunk/Contest/FinalContestRobot2/source/user_xy.c: 
 C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h: 

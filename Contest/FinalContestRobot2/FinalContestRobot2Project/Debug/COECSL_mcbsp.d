@@ -1,6 +1,6 @@
 # FIXED
 
-COECSL_mcbsp.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/COECSL_mcbsp.c
+COECSL_mcbsp.obj: C:/decamar2/trunk/Contest/FinalContestRobot2/source/COECSL_mcbsp.c
 COECSL_mcbsp.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h
 COECSL_mcbsp.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h
 COECSL_mcbsp.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h
@@ -130,7 +130,7 @@ COECSL_mcbsp.obj: ../../../../LabFiles/mcbsp_com/mcbsp_com.h
 COECSL_mcbsp.obj: ../../include/COECSL_mcbsp.h
 COECSL_mcbsp.obj: ../../include/COECSL_edma3.h
 
-C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/COECSL_mcbsp.c: 
+C:/decamar2/trunk/Contest/FinalContestRobot2/source/COECSL_mcbsp.c: 
 C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xdc/std.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stdarg.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/stddef.h: 
