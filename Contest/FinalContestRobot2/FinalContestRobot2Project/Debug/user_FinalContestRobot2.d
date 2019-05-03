@@ -1,6 +1,6 @@
 # FIXED
 
-user_FinalContestRobot2.obj: C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/user_FinalContestRobot2.c
+user_FinalContestRobot2.obj: C:/decamar2/trunk/Contest/FinalContestRobot2/source/user_FinalContestRobot2.c
 user_FinalContestRobot2.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/math.h
 user_FinalContestRobot2.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/linkage.h
 user_FinalContestRobot2.obj: C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/elfnames.h
@@ -260,7 +260,7 @@ user_FinalContestRobot2.obj: C:/CCStudio_v8/xdctools_3_50_05_12_core/packages/xd
 user_FinalContestRobot2.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Event__epilogue.h
 user_FinalContestRobot2.obj: C:/CCStudio_v8/bios_6_70_01_03/packages/ti/sysbios/knl/Semaphore__epilogue.h
 
-C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/source/user_FinalContestRobot2.c: 
+C:/decamar2/trunk/Contest/FinalContestRobot2/source/user_FinalContestRobot2.c: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/math.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/linkage.h: 
 C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c6000_8.2.2/include/elfnames.h: 

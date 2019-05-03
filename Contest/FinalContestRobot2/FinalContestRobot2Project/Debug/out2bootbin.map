@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ********************************************************************************
 TMS320C6x Hex Converter                                                   v8.2.2
 ********************************************************************************
@@ -28,3 +29,35 @@ OUTPUT TRANSLATION MAP
                          .const.1 : btad=0002285c  dest=11821b20 size=00000060
                          .const.2 : btad=000228c4  dest=1182db40 size=000026b4
                           .switch : btad=00024f80  dest=11833950 size=00000100
+=======
+********************************************************************************
+TMS320C6x Hex Converter                                                   v8.2.2
+********************************************************************************
+
+INPUT FILE NAME: <FinalContestRobot2.out>
+OUTPUT FORMAT:   Binary
+
+PHYSICAL MEMORY PARAMETERS
+   Default data width   :   8
+   Default memory width :   8
+   Default output width :   8
+
+BOOT LOADER PARAMETERS
+   Table Address: 0x0000, PAGE 0
+   Entry Point  : 0x1181e480
+
+
+OUTPUT TRANSLATION MAP
+--------------------------------------------------------------------------------
+00000000..0003ffff  Page=0  Memory Width=8  ROM Width=8  "SPIFLASH"
+--------------------------------------------------------------------------------
+   OUTPUT FILES: FinalContestRobot2.hex [b0..b7]
+
+   CONTENTS: 00000000..00024f97   BOOT TABLE
+                            .vecs : btad=00000000  dest=11833800 size=00000200
+                           .cinit : btad=0000020c  dest=11833b68 size=00000b18
+                            .text : btad=00000d2c  dest=11800000 size=00021a00
+                           .const : btad=00022734  dest=1182d9c0 size=00002748
+                        .switch.1 : btad=00024e84  dest=11833740 size=000000bc
+                        .switch.2 : btad=00024f48  dest=11833b20 size=00000044
+>>>>>>> 9b478038ddfd90d86107d01128d146726d3e1189

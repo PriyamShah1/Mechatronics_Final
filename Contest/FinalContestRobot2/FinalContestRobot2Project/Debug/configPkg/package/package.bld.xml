@@ -7,7 +7,7 @@
         <srcFile name="package/cfg/FinalContestRobot2_pe674.c"/>
     </sources>
     <configscripts>
-        <srcFile name="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"/>
+        <srcFile name="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"/>
     </configscripts>
     <makefiles>
         <srcFile name="package.mak" src="package.bld"/>
@@ -44,7 +44,7 @@
         isPartial="false"
         xCfgScript="package/cfg/FinalContestRobot2_pe674.cfg"
         xCfgPrefix="package/cfg/FinalContestRobot2_pe674"
-        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
+        cfgScript="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
         cfgArgs="null"
         />
     </configurations>
@@ -56,7 +56,7 @@
         profile="debug"
         xCfgScript="package/cfg/FinalContestRobot2_pe674.cfg"
         xCfgPrefix="package/cfg/FinalContestRobot2_pe674"
-        cfgScript="C:/hzhou39_decamar2_ashwina2/SE423Repo/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
+        cfgScript="C:/decamar2/trunk/Contest/FinalContestRobot2/SYSBIOS/FinalContestRobot2.cfg"
         cfgArgs="null"
         />
     </executables>
