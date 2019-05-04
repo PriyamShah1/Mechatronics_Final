@@ -12,7 +12,7 @@ PHYSICAL MEMORY PARAMETERS
 
 BOOT LOADER PARAMETERS
    Table Address: 0x00000000, PAGE 0
-   Entry Point  : 0x1181eea0
+   Entry Point  : 0x1181f360
 
 
 OUTPUT TRANSLATION MAP
@@ -21,9 +21,10 @@ OUTPUT TRANSLATION MAP
 --------------------------------------------------------------------------------
    OUTPUT FILES: FinalContestRobot2.hex [b0..b7]
 
-   CONTENTS: 00000000..00025a33   BOOT TABLE
-                            .vecs : btad=00000000  dest=11834400 size=0x200
-                           .cinit : btad=0000020c  dest=11834720 size=0xb18
-                            .text : btad=00000d2c  dest=11800000 size=0x22400
-                           .const : btad=00023134  dest=1182e3f0 size=0x27c0
-                          .switch : btad=000258fc  dest=118341e8 size=0x12c
+   CONTENTS: 00000000..00025f17   BOOT TABLE
+                            .vecs : btad=00000000  dest=11834800 size=0x200
+                           .cinit : btad=0000020c  dest=11834b20 size=0xb18
+                            .text : btad=00000d2c  dest=11800000 size=0x228c0
+                         .const.1 : btad=000235f4  dest=118228c0 size=0x40
+                         .const.2 : btad=0002363c  dest=1182e8e0 size=0x2794
+                          .switch : btad=00025dd8  dest=118346b8 size=0x134

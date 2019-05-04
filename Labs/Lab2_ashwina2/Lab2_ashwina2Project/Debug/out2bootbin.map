@@ -12,7 +12,7 @@ PHYSICAL MEMORY PARAMETERS
 
 BOOT LOADER PARAMETERS
    Table Address: 0x0000, PAGE 0
-   Entry Point  : 0x11815f60
+   Entry Point  : 0x11815fc0
 
 
 OUTPUT TRANSLATION MAP
@@ -21,10 +21,10 @@ OUTPUT TRANSLATION MAP
 --------------------------------------------------------------------------------
    OUTPUT FILES: Lab2_ashwina2.hex [b0..b7]
 
-   CONTENTS: 00000000..0001c593   BOOT TABLE
+   CONTENTS: 00000000..0001c5f3   BOOT TABLE
                             .vecs : btad=00000000  dest=11828000 size=00000200
-                           .cinit : btad=0000020c  dest=11828220 size=000009b0
-                            .text : btad=00000bc4  dest=11800000 size=00019380
-                           .const : btad=00019f4c  dest=118227d8 size=000025b0
-                        .switch.1 : btad=0001c504  dest=11827fa0 size=0000005c
-                        .switch.2 : btad=0001c568  dest=11828200 size=00000020
+                           .cinit : btad=0000020c  dest=11828280 size=000009b0
+                            .text : btad=00000bc4  dest=11800000 size=000193e0
+                         .const.1 : btad=00019fac  dest=118193e0 size=00000020
+                         .const.2 : btad=00019fd4  dest=11822858 size=00002590
+                          .switch : btad=0001c56c  dest=11828200 size=0000007c

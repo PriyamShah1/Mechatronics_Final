@@ -239,40 +239,40 @@ void init_ColorVision(void) {
     ptrshrdmem = (sharedmemstruct *)SHARED_MEM;
 
     // set specs for a bright red
-    switch(colorstate) {
-    case 0: //orange
-        specs_h = 252;//h goes from 245 to 5 not sure abour wraping around
-        specs_hrad = 8;
-        if((specs_h-specs_hrad)<0) // wrap 0->360
-        {
-            specs_h2=specs_h+256;
-        }
-        else // wrap 360->0
-        {
-            specs_h2=specs_h-256;
-        }
-        specs_s = 243;//(230+255)/2;
-        specs_srad = 12;//(255-230)/2;
-        specs_v = 252;
-        specs_vrad = 3;//(255-250)/2;
-        break;
-    case 1: //blue
-        specs_h = 150;//150-
-        specs_hrad = 10;
-        if((specs_h-specs_hrad)<0) // wrap 0->360
-        {
-            specs_h2=specs_h+256;
-        }
-        else // wrap 360->0
-        {
-            specs_h2=specs_h-256;
-        }
-        specs_s = 227;
-        specs_srad = 28;
-        specs_v = 200;
-        specs_vrad = 55;
-        break;
-    }
+//    switch(colorstate) {
+//    case 0: //orange
+//        specs_h = 252;//h goes from 245 to 5 not sure abour wraping around
+//        specs_hrad = 8;
+//        if((specs_h-specs_hrad)<0) // wrap 0->360
+//        {
+//            specs_h2=specs_h+256;
+//        }
+//        else // wrap 360->0
+//        {
+//            specs_h2=specs_h-256;
+//        }
+//        specs_s = 243;//(230+255)/2;
+//        specs_srad = 12;//(255-230)/2;
+//        specs_v = 252;
+//        specs_vrad = 3;//(255-250)/2;
+//        break;
+//    case 1: //blue
+//        specs_h = 150;//150-
+//        specs_hrad = 10;
+//        if((specs_h-specs_hrad)<0) // wrap 0->360
+//        {
+//            specs_h2=specs_h+256;
+//        }
+//        else // wrap 360->0
+//        {
+//            specs_h2=specs_h-256;
+//        }
+//        specs_s = 227;
+//        specs_srad = 28;
+//        specs_v = 200;
+//        specs_vrad = 55;
+//        break;
+//    }
 
 
     while (CHKBIT(VPIF->INTSTAT,INT_FRAME_CH1) == 0) {}
@@ -551,18 +551,16 @@ void userProcessColorImageFunc_laser(bgr *ptrImage) {
                 //new_object_theta 	= final_object_stats[largest_object].theta;
                 //new_C20				= final_object_stats[largest_object].C20_sum;
                 //new_C02				= final_object_stats[largest_object].C02_sum;
-                new_coordata = 1;
                 if (colorstate == 0){
                     orange_object_x = object_x;
                     orange_object_y = object_y;
                     orange_numpels = numpels;
-                    colorstate = 1;
-                }else {
+                }else if (colorstate == 1){
                     blue_object_x = object_x;
                     blue_object_y = object_y;
                     blue_numpels = numpels;
-                    colorstate = 0;
                 }
+                new_coordata = 1;
             } else {
                 noimagefound = 1;
                 new_num_found_objects = num_unique_objects;

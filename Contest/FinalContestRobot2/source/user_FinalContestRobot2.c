@@ -323,16 +323,19 @@ float ft = 0.0;
 float p1 = 2.0062e-05;
 float p2 = 0.0033488;
 float p3 = 0.20483;
-float p4 = 6.0104;
+float p4 = 6.5104;
 
 float colorerror = 0;
-float KpLight = 0.05;
+float KpLight = 0.1;
 
-float bluex[3];
-float bluey[3];
+float bluex[6];
+float bluey[6];
 
-float orangex[10];
-float orangey[10];
+float orangex[6];
+float orangey[6];
+
+int WeedCoolDown = 0;
+int DeathSpin = 0;
 
 char map[176] =         //16x11
 {   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -388,9 +391,9 @@ void add_dest(float xpos, float ypos, pose arr[]){
 }
 
 int compare_pos(float x, float y){//return 1 if found; 0 not found
-    for(i = 0; i<10; i++){
-        if (abs(bluex[i]-x)<1.0 && (abs(bluey[i]-y)<1.0) ) return 1;
-        if (abs(orangex[i]-x)<1.0 && (abs(orangey[i]-y)<1.0) ) return 1;
+    for(i = 1; i<=6; i++){
+        if (fabs(bluex[i]-x)<1.5 && (fabs(bluey[i]-y)<1.5) ) return 1;
+        if (fabs(orangex[i]-x)<1.5 && (fabs(orangey[i]-y)<1.5) ) return 1;
     }
     return 0;
 }
@@ -613,7 +616,7 @@ void ComWithLinux(void) {
                     }
                     newWeed = 0;
                 }
-                // Default
+                //                 Default
                 ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f",(newROBOTpsx+10),(13-newROBOTpsy),data1,data2,data3,(data4+10)*40,(13-data5)*40,(data6+10)*40,(13-data7)*40);
                 // you would do something like this
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f",var1,var2,var3,var4);
@@ -787,13 +790,13 @@ Int main()
 
     // TODO: defined destinations that moves the robot around and outside the course
     robotdest[0].x = 0;     robotdest[0].y = 0;
-    robotdest[1].x = -5;    robotdest[1].y = 9;
-    robotdest[2].x = 5;     robotdest[2].y = 9;
-    robotdest[3].x = 0;    robotdest[3].y = 0;
-    robotdest[4].x = 5;     robotdest[4].y = 9;
-    robotdest[5].x = -5;    robotdest[5].y = 9;
-    robotdest[6].x = 5;     robotdest[6].y = 9;
-    robotdest[7].x = -5;    robotdest[7].y = 9;
+    robotdest[1].x = 5;    robotdest[1].y = 9;
+    robotdest[2].x = 0;     robotdest[2].y = 0;
+    robotdest[3].x = -5;    robotdest[3].y = 9;
+    robotdest[4].x = 0;     robotdest[4].y = 0;
+    robotdest[5].x = 5;    robotdest[5].y = 9;
+    robotdest[6].x = -5;     robotdest[6].y = 9;
+    robotdest[7].x = 5;    robotdest[7].y = 9;
     //    //middle of bottom
     //    robotdest[2].x = 0;       robotdest[2].y = 5;
     //    //outside the course
@@ -1009,47 +1012,47 @@ Int main()
     obs[56].idx3 = obs[56].r * 11 + obs[56].c+1;
     obs[56].orientation = 0; // horizontal orientation
     obs[56].sendLV = 0;
-//    for(i = 0; i < 30; i ++){
-//        boxes[i].no_left_wall = 0;
-//        boxes[i].no_right_wall = 0;
-//
-//    }
-//    for(i = 0; i < 5; i ++){
-//        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
-//        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
-//        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
-//        boxes[i].no_left_wall = 1;
-//    }
-//    for(i = 5; i < 10; i ++){
-//        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
-//        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
-//        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
-//        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
-//    }
-//    for(i = 10; i < 15; i ++){
-//        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
-//        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
-//        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-//        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
-//    }
-//    for(i = 15; i < 20; i ++){
-//        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
-//        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
-//        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-//        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
-//    }
-//    for(i = 20; i < 25; i ++){
-//        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
-//        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
-//        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
-//        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
-//    }
-//    for(i = 25; i < 30; i ++){
-//        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
-//        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
-//        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
-//        boxes[i].no_right_wall = 1;
-//    }
+    //    for(i = 0; i < 30; i ++){
+    //        boxes[i].no_left_wall = 0;
+    //        boxes[i].no_right_wall = 0;
+    //
+    //    }
+    //    for(i = 0; i < 5; i ++){
+    //        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
+    //        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
+    //        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
+    //        boxes[i].no_left_wall = 1;
+    //    }
+    //    for(i = 5; i < 10; i ++){
+    //        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
+    //        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
+    //        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
+    //        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
+    //    }
+    //    for(i = 10; i < 15; i ++){
+    //        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
+    //        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
+    //        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+    //        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
+    //    }
+    //    for(i = 15; i < 20; i ++){
+    //        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
+    //        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
+    //        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+    //        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
+    //    }
+    //    for(i = 20; i < 25; i ++){
+    //        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
+    //        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
+    //        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
+    //        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
+    //    }
+    //    for(i = 25; i < 30; i ++){
+    //        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
+    //        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
+    //        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
+    //        boxes[i].no_right_wall = 1;
+    //    }
     // flag pins
     GPIO_setDir(IMAGE_TO_LINUX_BANK, IMAGE_TO_LINUX_FLAG, GPIO_OUTPUT);
     GPIO_setDir(OPTITRACKDATA_FROM_LINUX_BANK, OPTITRACKDATA_FROM_LINUX_FLAG, GPIO_OUTPUT);
@@ -1115,16 +1118,17 @@ void RobotControl(void) {
     //receive vision data
     if (new_coordata == 1) {
         if (colorstate == 1) {
-            blue_center_x = (int)blue_object_x;
-            blue_center_y = (int)blue_object_y;
+            blue_center_x = blue_object_x;
+            blue_center_y = blue_object_y;
             blue_area = blue_numpels;
-            new_coordata = 0;
-        }else {
+            colorstate = 0;
+        }else if (colorstate == 0) {
             orange_center_x = orange_object_x;
             orange_center_y = orange_object_y;
             orange_area = orange_numpels;
-            new_coordata = 0;
+            colorstate = 1;
         }
+        new_coordata = 0;
     }
 
     int minLADARfrontright = LADARdistance[29];
@@ -1340,8 +1344,8 @@ void RobotControl(void) {
             break;
         case 10:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"S%d Bf%d Of%d %d ",(int)robotstate, blue_found, orange_found, DeathSpin);
+                LCDPrintfLine(2,"%d:Ba:%d %d:Oa:%d", to_blue, blue_area, to_orange, orange_area);
             }
             break;
         case 11:
@@ -1352,8 +1356,8 @@ void RobotControl(void) {
             break;
         case 12:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"%d FB:%d FO:%d",(int)robotstate, blue_found, orange_found);
-                LCDPrintfLine(2,"%dAB:%d %dAO:%d", to_blue, blue_area, to_orange, orange_area);
+                LCDPrintfLine(1,"RS:%d Bf:%d Of:%d",(int)robotstate, blue_found, orange_found);
+                LCDPrintfLine(2,"%d:Ba:%d %d:Oa:%d", to_blue, blue_area, to_orange, orange_area);
             }
             break;
         case 13:
@@ -1364,13 +1368,13 @@ void RobotControl(void) {
             break;
         case 14:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"%d X:%.1f Y:%.1f", (int)robotstate, ROBOTps.x, ROBOTps.y);
-                LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_orange, orange_posx, orange_posy, orange_numpels);
+                LCDPrintfLine(1,"%d CD:%d Bf:%d", (int)robotstate, WeedCoolDown, orange_found);
+                LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_orange, orange_posx, orange_posy, orange_area);
             }
             break;
         case 15:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"%d X:%.1f Y:%.1f", (int)robotstate, ROBOTps.x, ROBOTps.y);
+                LCDPrintfLine(1,"%d CD:%d Bf:%d", (int)robotstate, WeedCoolDown, blue_found);
                 LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_blue, blue_posx, blue_posy, blue_area);
             }
             break;
@@ -1479,15 +1483,18 @@ void RobotControl(void) {
         //                robotstate = 2;
         //            }
         case 2:
-            if (blue_area>40 && to_blue == 0){
+            if (WeedCoolDown > 0){
+                WeedCoolDown--;
+            }
+            if (blue_area>20 && to_blue == 0 && WeedCoolDown == 0){
                 to_blue = 1;
                 robotstate = 5;
                 break;
-            //}else if (orange_area>60 && to_orange == 0){
-//                to_orange = 1;
-//                robotstate = 7;
-//                break;
-            }else if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
+            }else if (orange_area>20 && to_orange == 0 && WeedCoolDown == 0){
+                to_orange = 1;
+                robotstate = 7;
+                break;
+            }else if( xy_control(&vref, &turn, 5.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     statePos = (statePos+1)%robotdestSize;
@@ -1496,19 +1503,20 @@ void RobotControl(void) {
                 //                if(ROBOTps.y < 0){
                 //                    robotstate = 1;
                 //                }
+
             }
             break;
 
         case 3://spraying weeds for 1 s
             vref = 0;
             turn = 0;
+            to_blue = 0;
+            to_orange = 0;
             if(spraying<1000){
                 spraying ++;
             }else{
                 spraying = 0;
                 robotstate = 2;//done spraying, going to next setpoint
-                to_blue = 0;
-                to_orange = 0;
             }
             break;
 
@@ -1516,65 +1524,86 @@ void RobotControl(void) {
             colorerror = 0-blue_center_x;
             turn = KpLight*colorerror;
             vref = 0.1;
-            if (abs(blue_center_x)<20){
-                float ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
-                blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
-                blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
-                if(!compare_pos(blue_posx,blue_posy)){
-                    to_blue = 1;
-                    robotstate = 6;
-                    bluex[blue_found] = blue_posx;
-                    bluey[blue_found] = blue_posy;
-                    blue_found ++;
-                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
-                    sharedbluex = blue_posx;
-                    sharedbluey = blue_posy;
-                    newWeed = 1;
-                }else{
-                    to_blue = 0;
-                    robotstate = 2;
+            DeathSpin++;
+            if (DeathSpin>1000){
+                DeathSpin = 0;
+                robotstate = 2;
+                to_blue=0;
+                break;
+            }else{
+                if (abs(blue_center_x)<5){
+                    WeedCoolDown = 2000;
+                    DeathSpin = 0;
+                    float ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+p4;
+                    blue_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+                    blue_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+                    if(!compare_pos(blue_posx,blue_posy)){
+                        to_blue = 1;
+                        robotstate = 6;
+                        blue_found ++;
+                        bluex[blue_found] = blue_posx;
+                        bluey[blue_found] = blue_posy;
+                        // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+                        sharedbluex = blue_posx;
+                        sharedbluey = blue_posy;
+                        newWeed = 1;
+                    }else{
+                        to_blue = 0;
+                        robotstate = 2;
+                    }
+                    break;
                 }
-
             }
             break;
 
         case 6:// move to x,y Blue Weed assuming no obstacle
-            if( xy_control(1, 0, 0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5)){
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5)){
                 robotstate = 3;//wait for 1 s
             }
             break;
 
-//        case 7://turning to face orange straight ahead
-//            colorerror = 0-orange_center_x;
-//            turn = KpLight*colorerror;
-//            if (abs(orange_center_x)<20){
-//                float ft = (p1*(orange_center_y)*(orange_center_y)*(orange_center_y)) + (p2*(orange_center_y)*(orange_center_y))+(p3*(orange_center_y))+p4;
-//                orange_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
-//                orange_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
-//                if(!compare_pos(orange_posx,orange_posy)){
-//                    to_orange = 1;
-//                    robotstate = 8;
-//                    orangex[orange_found] = orange_posx;
-//                    orangey[orange_found] = orange_posy;
-//                    orange_found ++;
-//                    // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
-//                    sharedorangex = orange_posx;
-//                    sharedorangey = orange_posy;
-//                    newWeed = 1;
-//                }else{
-//                    to_orange = 0;
-//                    robotstate = 2;
-//                }
-//            }
-//            break;
-//
-//        case 8:// move to x,y Orange Weed assuming no obstacle
-//            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
-//                robotstate = 3;//wait for 1 s
-//            }
-//
-//
-//            break;
+        case 7://turning to face orange straight ahead
+            colorerror = 0-orange_center_x;
+            turn = KpLight*colorerror;
+            DeathSpin++;
+            if (DeathSpin>1000){
+                DeathSpin = 0;
+                to_orange = 0;
+                robotstate = 2;
+                break;
+            }else{
+                if (abs(orange_center_x)<5){
+                    WeedCoolDown = 2000;
+                    DeathSpin = 0;
+                    float ft = (p1*(orange_center_y)*(orange_center_y)*(orange_center_y)) + (p2*(orange_center_y)*(orange_center_y))+(p3*(orange_center_y))+p4;
+                    orange_posx = ROBOTps.x + ft*cos(ROBOTps.theta);
+                    orange_posy = ROBOTps.y + ft*sin(ROBOTps.theta);
+                    if(!compare_pos(orange_posx,orange_posy)){
+                        to_orange = 1;
+                        robotstate = 8;
+                        orange_found ++;
+                        orangex[orange_found] = orange_posx;
+                        orangey[orange_found] = orange_posy;
+                        // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
+                        sharedorangex = orange_posx;
+                        sharedorangey = orange_posy;
+                        newWeed = 1;
+                    }else{
+                        to_orange = 0;
+                        robotstate = 2;
+                    }
+                    break;
+                }
+            }
+            break;
+
+        case 8:// move to x,y Orange Weed assuming no obstacle
+            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
+                robotstate = 3;//wait for 1 s
+            }
+
+
+            break;
 
 
         }
@@ -1770,7 +1799,7 @@ void horizontal_edge_box_detector(int i){
     int j;
     index = i;
     if(ROBOTps.y > obs[index].y){
-       for(i = 0; i < 30; i ++){
+        for(i = 0; i < 30; i ++){
             if((boxes[i].edge[0]->x == obs[index].x) && (boxes[i].edge[0]->y == obs[index].y)){
                 if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
                     for(j = 0; j < 4; j ++){
@@ -1816,7 +1845,7 @@ void horizontal_edge_box_detector(int i){
         }
     }
     if(ROBOTps.y < obs[index].y){
-       for(i = 0; i < 30; i ++){
+        for(i = 0; i < 30; i ++){
             if((boxes[i].edge[2]->x == obs[index].x) && (boxes[i].edge[2]->y == obs[index].y)){
                 if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
                     for(j = 0; j < 4; j ++){
@@ -1867,7 +1896,7 @@ void vertical_edge_box_detector(int i){
     index = i;
     int j;
     if(ROBOTps.x > obs[index].x){
-       for(i = 0; i < 30; i ++){
+        for(i = 0; i < 30; i ++){
             if((boxes[i].edge[1]->x == obs[index].x) && (boxes[i].edge[1]->y == obs[index].y)){
                 if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
                     for(j = 0; j < 4; j ++){
@@ -1913,7 +1942,7 @@ void vertical_edge_box_detector(int i){
         }
     }
     if(ROBOTps.x > obs[index].x){
-       for(i = 0; i < 30; i ++){
+        for(i = 0; i < 30; i ++){
             if((boxes[i].edge[3]->x == obs[index].x) && (boxes[i].edge[3]->y == obs[index].y)){
                 if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
                     for(j = 0; j < 4; j ++){
