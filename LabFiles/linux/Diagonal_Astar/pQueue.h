@@ -13,6 +13,10 @@ typedef struct node
 {
 	int row;
 	int col;
+	int diag_topright;
+	int diag_topleft;
+	int diag_bottomright;
+	int diag_bottomleft;
 	int distTravelFromStart;
 	int distToGoal;
 	int totalDist;

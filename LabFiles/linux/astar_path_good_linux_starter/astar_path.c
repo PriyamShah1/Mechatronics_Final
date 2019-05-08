@@ -115,8 +115,11 @@ heap_t openSet, closedSet;
 //preconditions: rowCurr, colCurr, rowGoal, and colGoal are feasible locations in the matrix
 //returns the distance between two points as the sum of the row and column differences "Manhattan" distance on a square grid
 int heuristic(int rowCurr, int colCurr, int rowGoal, int colGoal)
-{
-	return abs(rowGoal-rowCurr) + abs(colGoal-colCurr);
+{	int dx,dy,min;
+	dx = abs(colGoal-colCurr);
+	dy = abs(rowGoal-rowCurr);
+	return 1000*(dx + dy -  dy ^ ((dx ^ dy) & -(dx < dy))) ; // optimal distance
+	//return dx+dy;
 }
 
 //assumes that canTravel is called with neighboring points of a valid starting point
@@ -173,6 +176,35 @@ int getNeighbors(int rowCurr, int colCurr)
 		neighbors[numNeighbors] = nodeToAdd;
 		numNeighbors++;
 	}
+	if(canTravel(rowCurr+1, colCurr+1) == 1)	//can travel bottom right
+	{
+		nodeToAdd.row = rowCurr+1;
+		nodeToAdd.col = colCurr+1;
+		neighbors[numNeighbors] = nodeToAdd;
+		numNeighbors++;
+	}
+		if(canTravel(rowCurr+1, colCurr-1) == 1)	//can travel bottom left
+	{
+		nodeToAdd.row = rowCurr+1;
+		nodeToAdd.col = colCurr-1;
+		neighbors[numNeighbors] = nodeToAdd;
+		numNeighbors++;
+	}
+		if(canTravel(rowCurr-1, colCurr+1) == 1)	//can travel up right
+	{
+		nodeToAdd.row = rowCurr-1;
+		nodeToAdd.col = colCurr+1;
+		neighbors[numNeighbors] = nodeToAdd;
+		numNeighbors++;
+	}
+		if(canTravel(rowCurr-1, colCurr-1) == 1)	//can travel bottom right
+	{
+		nodeToAdd.row = rowCurr-1;
+		nodeToAdd.col = colCurr-1;
+		neighbors[numNeighbors] = nodeToAdd;
+		numNeighbors++;
+	}
+	
 	return numNeighbors;
 }
  
@@ -268,7 +300,6 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 		/*generate q's 4 neighbors*/
 		// 3.  Pass q's row and col to getNeighbors
 		int numNeighbors = getNeighbors(minDistNode.row, minDistNode.col);	//get list of neighbors
-	
 		/*for each neighbor*/
 		int cnt = 0;
 		for(cnt = 0; cnt<numNeighbors; cnt++)	//for each found neighbor
@@ -288,15 +319,57 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 				goalFound = 't';
 				break;
 			}
-			
+			int coordinate = 0;
+			int next_coordinate = 0;
 			/*neighbor.distTravelFromStart (g) = q.distTravelFromStart + distance between neighbor and q which is always 1 when search just top left bottom right*/
 			// 6.  Set this neighbor's distance traveled from the start.  Remember you have the variable "currDist" that is the distance of q to Start
-			next.distTravelFromStart = currDist + 1;
-			
+			if((abs(minDistNode.row - next.row) == 1) && (abs(minDistNode.col - next.col) == 1)){
+				coordinate = minDistNode.row * mapColSize + minDistNode.col;
+				next_coordinate = next.row * mapColSize + next.col;
+				if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row < minDistNode.row))){
+						if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate - 11])){
+							next.distTravelFromStart = currdist + 25000;
+							// free(next); // delete this node from memory
+							// continue;
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row < minDistNode.row))){
+						if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate - 11])){
+							next.distTravelFromStart = currdist + 25000;
+							// free(next); 
+							// continue; // delete this node from memory
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate + 11])){
+						next.distTravelFromStart = currdist + 25000;
+						// free(next); // delete this node from memory
+						// continue;
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate + 11])){
+						next.distTravelFromStart = currdist + 25000;
+						// free(next); 
+						// continue; // delete this node from memory
+						}
+					}
+				}
+				else{
+					next.distTravelFromStart = currDist + 1400;
+				}
+			}
+				
+			else{
+				next.distTravelFromStart = currDist + 1000;
+			}
 			/*neighbor.distToGoal (h) = distance from goal to neighbor, heuristic function	(estimated distance to goal)*/
 			// 7.  Pass the correct parameters to "heuristic" to calculate the distance this neighbor is from the goal.
 			//  Remember that we have the variables rowEnd and colEnd which are the grid coordinates of the goal 
-			next.distToGoal = heuristic(next.row, next.col, rowEnd, colEnd);
+			next.distToGoal = heuristic(next.row,next.col, rowEnd, colEnd);
 			
 			/*neighbor.totalDist (f) = neighbor.distTravelFromStart + neighbor.distToGoal
 				(total estimated distance as sum of distance traveled from start and distance to goal)*/
@@ -425,7 +498,6 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 							printf("\n");
 							printf("\n");
 							printf("\n");
-							
 							return 1;
 						} else {
 							printf("\n\n\nNo Path Found\n\n\n");
@@ -581,10 +653,11 @@ int mygetch(void)
 */
 void gs_killapp(int s)
 {
-	printf("\nTerminating version 5.2.19\n");
+	printf("\nTerminating\n");
 
 	gs_quit = 1;
 	gs_exit = 1;
 	close(gs_coms_skt);
 	return;
 }
+

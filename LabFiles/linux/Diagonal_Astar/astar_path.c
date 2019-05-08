@@ -176,28 +176,28 @@ int getNeighbors(int rowCurr, int colCurr)
 		neighbors[numNeighbors] = nodeToAdd;
 		numNeighbors++;
 	}
-	if(canTravel(rowCurr+1, colCurr+1) == 1)	//can travel upright
+	if(canTravel(rowCurr+1, colCurr+1) == 1)	//can travel bottom right
 	{
 		nodeToAdd.row = rowCurr+1;
 		nodeToAdd.col = colCurr+1;
 		neighbors[numNeighbors] = nodeToAdd;
 		numNeighbors++;
 	}
-		if(canTravel(rowCurr+1, colCurr-1) == 1)	//can travel upleft
+		if(canTravel(rowCurr+1, colCurr-1) == 1)	//can travel bottom left
 	{
 		nodeToAdd.row = rowCurr+1;
 		nodeToAdd.col = colCurr-1;
 		neighbors[numNeighbors] = nodeToAdd;
 		numNeighbors++;
 	}
-		if(canTravel(rowCurr-1, colCurr+1) == 1)	//can travel bottomright
+		if(canTravel(rowCurr-1, colCurr+1) == 1)	//can travel up right
 	{
 		nodeToAdd.row = rowCurr-1;
 		nodeToAdd.col = colCurr+1;
 		neighbors[numNeighbors] = nodeToAdd;
 		numNeighbors++;
 	}
-		if(canTravel(rowCurr-1, colCurr-1) == 1)	//can travel bottomleft
+		if(canTravel(rowCurr-1, colCurr-1) == 1)	//can travel bottom right
 	{
 		nodeToAdd.row = rowCurr-1;
 		nodeToAdd.col = colCurr-1;
@@ -300,7 +300,6 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 		/*generate q's 4 neighbors*/
 		// 3.  Pass q's row and col to getNeighbors
 		int numNeighbors = getNeighbors(minDistNode.row, minDistNode.col);	//get list of neighbors
-	
 		/*for each neighbor*/
 		int cnt = 0;
 		for(cnt = 0; cnt<numNeighbors; cnt++)	//for each found neighbor
@@ -320,13 +319,50 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 				goalFound = 't';
 				break;
 			}
-			
+			int coordinate = 0;
+			int next_coordinate = 0;
 			/*neighbor.distTravelFromStart (g) = q.distTravelFromStart + distance between neighbor and q which is always 1 when search just top left bottom right*/
 			// 6.  Set this neighbor's distance traveled from the start.  Remember you have the variable "currDist" that is the distance of q to Start
 			if((abs(minDistNode.row - next.row) == 1) && (abs(minDistNode.col - next.col) == 1)){
-				next.distTravelFromStart = currDist + 1400;
-				
+				coordinate = minDistNode.row * mapColSize + minDistNode.col;
+				next_coordinate = next.row * mapColSize + next.col;
+				if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row < minDistNode.row))){
+						if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate - 11])){
+							next.distTravelFromStart = currdist + 2500;
+							// free(next); // delete this node from memory
+							// continue;
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row < minDistNode.row))){
+						if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate - 11])){
+							next.distTravelFromStart = currdist + 2500;
+							// free(next); 
+							// continue; // delete this node from memory
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate + 11])){
+						next.distTravelFromStart = currdist + 2500;
+						// free(next); // delete this node from memory
+						// continue;
+						}
+					}
+				}
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate + 11])){
+						next.distTravelFromStart = currdist + 2500;
+						// free(next); 
+						// continue; // delete this node from memory
+						}
+					}
+				}
+				else{
+					next.distTravelFromStart = currDist + 1400;
+				}
 			}
+				
 			else{
 				next.distTravelFromStart = currDist + 1000;
 			}
@@ -450,6 +486,18 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 								}
 								printf("\n");
 							}
+							return 1;
+						} else if (astarfoundpath == 2) {
+							myshared->sharedPathLen = 1;
+							myshared->sharedPathRow[0]=endRow; 
+							myshared->sharedPathCol[0]=endCol;
+							printf("\n");
+							printf("\n");
+							printf("\n");
+							printf("No Astar Run because start Position same as end position.\n");
+							printf("\n");
+							printf("\n");
+							printf("\n");
 							return 1;
 						} else {
 							printf("\n\n\nNo Path Found\n\n\n");

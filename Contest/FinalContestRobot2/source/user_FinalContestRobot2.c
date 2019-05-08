@@ -94,11 +94,13 @@ typedef struct edges_tag{
     int sendLV;
     int orientation;
     int found_flag;
+    int temp_flag;
 }edges;
 typedef struct box_tag{
     edges *edge[4];
     int no_left_wall;
     int no_right_wall;
+    int no_bottom_wall;
 }box;
 
 
@@ -155,8 +157,8 @@ float gyro4x_gain = 1;
 extern float mydist;
 
 int statePos = 0;   // index into robotdest
-int robotdestSize = 8;  // number of positions to use out of robotdest
-pose robotdest[8];  // array of waypoints for the robot
+int robotdestSize = 9;  // number of positions to use out of robotdest
+pose robotdest[9];  // array of waypoints for the robot
 
 extern float newLADARdistance[LADAR_MAX_DATA_SIZE];  //in mm
 extern float newLADARangle[LADAR_MAX_DATA_SIZE];        // in degrees
@@ -306,13 +308,13 @@ float orange_center_x = 0;
 float orange_center_y = 0;
 int orange_area = 0;
 
-int to_blue = 0;
+extern int to_blue = 0;
 float blue_posx = 0.0;
 float blue_posy = 0.0;
 float sharedbluex = 0.0;
 float sharedbluey = 0.0;
 
-int to_orange = 0;
+extern int to_orange = 0;
 float orange_posx = 0.0;
 float orange_posy = 0.0;
 float sharedorangex = 0.0;
@@ -323,7 +325,7 @@ float ft = 0.0;
 float p1 = 2.0062e-05;
 float p2 = 0.0033488;
 float p3 = 0.20483;
-float p4 = 6.5104;
+float p4 = 6.1104;
 
 float colorerror = 0;
 float KpLight = 0.1;
@@ -336,6 +338,11 @@ float orangey[6];
 
 int WeedCoolDown = 0;
 int DeathSpin = 0;
+long new_flag = 0;
+float DutyCycleBlue = 3.0;
+float DutyCycleOrange = 3.0;
+float PWMpos[6] = {3.82, 6.22, 9.0, 12.6, 12.6, 12.6};
+float DutyCycle = 0.0;
 
 char map[176] =         //16x11
 {   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -376,7 +383,7 @@ char originalMap[176] =
 
 edges obs[57];
 box boxes[30];
-
+edges temp;
 void add_dest(float xpos, float ypos, pose arr[]){
     robotdestSize++;
     for(i=robotdestSize; i>=statePos; i--)
@@ -392,8 +399,8 @@ void add_dest(float xpos, float ypos, pose arr[]){
 
 int compare_pos(float x, float y){//return 1 if found; 0 not found
     for(i = 1; i<=6; i++){
-        if (fabs(bluex[i]-x)<1.5 && (fabs(bluey[i]-y)<1.5) ) return 1;
-        if (fabs(orangex[i]-x)<1.5 && (fabs(orangey[i]-y)<1.5) ) return 1;
+        if (fabs(bluex[i]-x)<1.0 && (fabs(bluey[i]-y)<1.0) ) return 1;
+        if (fabs(orangex[i]-x)<1.0 && (fabs(orangey[i]-y)<1.0) ) return 1;
     }
     return 0;
 }
@@ -588,7 +595,7 @@ void ComWithLinux(void) {
 
         }
 
-        if ((tskcount%6)==0) {
+        if ((tskcount%20)==0) {
             if (GET_LVDATA_TO_LINUX) {
 
                 for (i = 0; i<57; i++){
@@ -617,7 +624,7 @@ void ComWithLinux(void) {
                     newWeed = 0;
                 }
                 //                 Default
-                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f",(newROBOTpsx+10),(13-newROBOTpsy),data1,data2,data3,(data4+10)*40,(13-data5)*40,(data6+10)*40,(13-data7)*40);
+                ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f",(newROBOTpsx+10.0),(13.0-newROBOTpsy),data1,data2,data3,(data4+10.0)*40.0,(13.0-data5)*40.0,(data6+10.0)*40.0,(13.0-data7)*40.0);
                 // you would do something like this
                 //ptrshrdmem->DSPSend_size = sprintf(toLinuxstring,"%.1f %.1f %.1f",var1,var2,var3,var4);
 
@@ -789,14 +796,17 @@ Int main()
     x_pred[2][0] = ROBOTps.theta;
 
     // TODO: defined destinations that moves the robot around and outside the course
-    robotdest[0].x = 0;     robotdest[0].y = 0;
-    robotdest[1].x = 5;    robotdest[1].y = 9;
-    robotdest[2].x = 0;     robotdest[2].y = 0;
-    robotdest[3].x = -5;    robotdest[3].y = 9;
-    robotdest[4].x = 0;     robotdest[4].y = 0;
-    robotdest[5].x = 5;    robotdest[5].y = 9;
-    robotdest[6].x = -5;     robotdest[6].y = 9;
-    robotdest[7].x = 5;    robotdest[7].y = 9;
+    robotdest[0].x = 0;     robotdest[0].y = -1;
+    robotdest[1].x = -5;     robotdest[1].y = -3;
+    robotdest[2].x = 3;    robotdest[2].y = 7;
+    robotdest[3].x = -3;     robotdest[3].y = 7;
+    robotdest[4].x = 5;    robotdest[4].y = -3;
+    robotdest[5].x = 0;     robotdest[5].y = 11;
+    robotdest[6].x = 0;    robotdest[6].y = -1;
+    robotdest[7].x = -2;    robotdest[7].y = -4;
+    robotdest[8].x = 2;    robotdest[8].y = -4;
+//    robotdest[6].x = -5;     robotdest[6].y = 9;
+//    robotdest[7].x = 5;    robotdest[7].y = 9;
     //    //middle of bottom
     //    robotdest[2].x = 0;       robotdest[2].y = 5;
     //    //outside the course
@@ -814,12 +824,14 @@ Int main()
         obs[i].tally = 0;
         obs[i].found = 0;
         if(obs[i].c == 0){
+            obs[i].idx1 = 131;
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
             obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
         }
         else if(obs[i].c == 10){
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+            obs[i].idx3 = 131;
         }
         else{
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
@@ -828,7 +840,9 @@ Int main()
         }
         obs[i].orientation = 0; // horizontal orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
+
     for(i=6; i<11; i++){
         obs[i].x = -4 + 2*(i % 6);
         obs[i].y = 9;
@@ -841,7 +855,9 @@ Int main()
         obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
         obs[i].orientation = 1; // vertical orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
+
     for(i=11; i<17; i++){
         obs[i].x = -5 + 2*((i+1)%6);
         obs[i].y = 8;
@@ -850,12 +866,14 @@ Int main()
         obs[i].tally = 0;
         obs[i].found = 0;
         if(obs[i].c == 0){
+            obs[i].idx1 = 131;
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
             obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
         }
         else if(obs[i].c == 10){
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+            obs[i].idx3 = 131;
         }
         else{
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
@@ -864,9 +882,10 @@ Int main()
         }
         obs[i].orientation = 0; // horizontal orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=17; i<22; i++){
-        obs[i].x = -4 + 2*((i+1)%6);
+        obs[i].x = -4 + 2*((i+1)%6); //populate map with all obs
         obs[i].y = 7;
         obs[i].tally = 0;
         obs[i].found = 0;
@@ -877,6 +896,7 @@ Int main()
         obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
         obs[i].orientation = 1; // vertical orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=22; i<28; i++){
         obs[i].x = -5 + 2*((i+2)%6);
@@ -886,12 +906,14 @@ Int main()
         obs[i].tally = 0;
         obs[i].found = 0;
         if(obs[i].c == 0){
+            obs[i].idx1 = 131;
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
             obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
         }
         else if(obs[i].c == 10){
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+            obs[i].idx3 = 131;
         }
         else{
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
@@ -900,6 +922,7 @@ Int main()
         }
         obs[i].orientation = 0; // horizontal orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=28; i<33; i++){
         obs[i].x = -4 + 2*((i+2)%6);
@@ -913,6 +936,7 @@ Int main()
         obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
         obs[i].orientation = 1; // vertical orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=33; i<39; i++){
         obs[i].x = -5 + 2*((i+3)%6);
@@ -922,12 +946,14 @@ Int main()
         obs[i].tally = 0;
         obs[i].found = 0;
         if(obs[i].c == 0){
+            obs[i].idx1 = 131;
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
             obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
         }
         else if(obs[i].c == 10){
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+            obs[i].idx3 = 131;
         }
         else{
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
@@ -936,6 +962,7 @@ Int main()
         }
         obs[i].orientation = 0; // horizontal orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=39; i<44; i++){
         obs[i].x = -4 + 2*((i+3)%6);
@@ -949,6 +976,7 @@ Int main()
         obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
         obs[i].orientation = 1; // vertical orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=44; i<50; i++){
         obs[i].x = -5 + 2*((i+4)%6);
@@ -958,12 +986,14 @@ Int main()
         obs[i].tally = 0;
         obs[i].found = 0;
         if(obs[i].c == 0){
+            obs[i].idx1 = 131;
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
             obs[i].idx3 = obs[i].r * 11 + (obs[i].c+1);
         }
         else if(obs[i].c == 10){
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
             obs[i].idx2 = obs[i].r *11 + (obs[i].c);
+            obs[i].idx3 = 131;
         }
         else{
             obs[i].idx1 = obs[i].r *11 + (obs[i].c-1);
@@ -972,6 +1002,7 @@ Int main()
         }
         obs[i].orientation = 0; // horizontal orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=50; i<55; i++){
         obs[i].x = -4 + 2*((i+4)%6);
@@ -982,17 +1013,19 @@ Int main()
         obs[i].c = 1 + 2*((i+4)%6);
         obs[i].idx1 = (obs[i].r-1) *11 + obs[i].c;
         obs[i].idx2 = obs[i].r *11 + obs[i].c;
-        obs[i].idx3 = (obs[i].r+1) * 11 + obs[i].c;
+        obs[i].idx3 = 131;
         obs[i].orientation = 1; // vertical orientation
         obs[i].sendLV = 0;
+        obs[i].temp_flag = 0;
     }
     for(i=0;i<5;i++){
-        obs[11*i].idx1 = 400;
-        obs[11*i + 5].idx3 = 400;
+        obs[11*i].idx1 = 131;
+        obs[11*i + 5].idx3 = 131;
     }
+    // priyam wrote this.
     obs[55].x = -1;
     obs[55].y = 0;
-    obs[55].r = 10;
+    obs[55].r = 11;
     obs[55].c = 4;
     obs[55].tally = 0;
     obs[55].found = 0;
@@ -1001,9 +1034,10 @@ Int main()
     obs[55].idx3 = obs[55].r * 11 + obs[55].c+1;
     obs[55].orientation = 0; // horizontal orientation
     obs[55].sendLV = 0;
+    obs[55].temp_flag = 0;
     obs[56].x = 1;
     obs[56].y = 0;
-    obs[56].r = 10;
+    obs[56].r = 11;
     obs[56].c = 6;
     obs[56].tally = 0;
     obs[56].found = 0;
@@ -1012,47 +1046,118 @@ Int main()
     obs[56].idx3 = obs[56].r * 11 + obs[56].c+1;
     obs[56].orientation = 0; // horizontal orientation
     obs[56].sendLV = 0;
-    //    for(i = 0; i < 30; i ++){
-    //        boxes[i].no_left_wall = 0;
-    //        boxes[i].no_right_wall = 0;
-    //
-    //    }
-    //    for(i = 0; i < 5; i ++){
-    //        boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
-    //        boxes[i].edge[1] = &(obs[6 + 11*i]); // right
-    //        boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
-    //        boxes[i].no_left_wall = 1;
-    //    }
-    //    for(i = 5; i < 10; i ++){
-    //        boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
-    //        boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
-    //        boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
-    //        boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
-    //    }
-    //    for(i = 10; i < 15; i ++){
-    //        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
-    //        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
-    //        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-    //        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
-    //    }
-    //    for(i = 15; i < 20; i ++){
-    //        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
-    //        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
-    //        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
-    //        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
-    //    }
-    //    for(i = 20; i < 25; i ++){
-    //        boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
-    //        boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
-    //        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
-    //        boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
-    //    }
-    //    for(i = 25; i < 30; i ++){
-    //        boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
-    //        boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
-    //        boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
-    //        boxes[i].no_right_wall = 1;
-    //    }
+    obs[56].temp_flag = 0;
+
+    temp.temp_flag = 1;
+    temp.found_flag = 0;
+    temp.x = 300;
+    temp.y = 300;
+    temp.r = 11;
+    temp.c = 10;
+    temp.idx1 = 131;
+    temp.idx2 = 131;
+    temp.idx3 = 131;
+    for(i = 0; i < 30; i ++){
+        boxes[i].no_left_wall = 0; // here are our initializations for each box
+        boxes[i].no_right_wall = 0;
+        boxes[i].no_bottom_wall = 0;
+    }
+    // Blocks are initialized as 4 edges with some blocks having only 3 or 2 edges. Specific flags are created for these blocks
+    for(i = 0; i < 5; i ++){
+        if((i%5) == 4){ // when you have a block at the bottom of the maze you have no bottom wall. This is the initilizations for those cases.
+            boxes[i].edge[0] = &(obs[11*i]); // top
+            boxes[i].edge[1] = &(obs[6 + 11*i]); // right
+            boxes[i].edge[2] = &(temp);
+            boxes[i].edge[3] = &(temp);
+            boxes[i].no_left_wall = 1;
+            boxes[i].no_bottom_wall = 1;
+            break;
+        }
+        else{
+            boxes[i].edge[0] = &(obs[11*i]); // top, boxes go down from top left to bottom left and then shift over a column
+            boxes[i].edge[1] = &(obs[6 + 11*i]); // right
+            boxes[i].edge[2] = &(obs[11 + 11*i]); // bottom
+            boxes[i].edge[3] = &(temp);
+            boxes[i].no_left_wall = 1;
+        }
+    }
+    for(i = 5; i < 10; i ++){
+        if((i%5) == 4){
+            boxes[i].edge[0] = &(obs[1 + 11*(i%5)]); // this is the case for the bottom block
+            boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
+            boxes[i].edge[2] = &(temp); // should never be accessed but points to an empty obstacle just in case. NEEDS TO BE INITIALIZED STILL
+            boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
+            boxes[i].no_bottom_wall = 1;
+            break;
+        }
+        else{
+            boxes[i].edge[0] = &(obs[1 + 11*(i%5)]);
+            boxes[i].edge[1] = &(obs[7 + 11*(i%5)]);
+            boxes[i].edge[2] = &(obs[12 + 11*(i%5)]);
+            boxes[i].edge[3] = &(obs[6 + 11*(i%5)]);
+        }
+    }
+    for(i = 10; i < 15; i ++){
+        if((i%5) == 4){
+            boxes[i].edge[0] = &(obs[2 + 11*(i%5)]); // this is the case for the bottom block
+            boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
+            boxes[i].edge[2] = &(obs[55]); // has been initialized
+            boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
+            break;
+        }
+        boxes[i].edge[0] = &(obs[2 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[8 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[13 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[7 + 11*(i%5)]);
+    }
+    for(i = 15; i < 20; i ++){
+        if((i%5) == 4){
+            boxes[i].edge[0] = &(obs[3 + 11*(i%5)]); // this is the case for the bottom block
+            boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
+            boxes[i].edge[2] = &(obs[56]); // has been initialized
+            boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
+            boxes[i].no_bottom_wall = 1;
+            break;
+        }
+        boxes[i].edge[0] = &(obs[3 + 11*(i%5)]);
+        boxes[i].edge[1] = &(obs[9 + 11*(i%5)]);
+        boxes[i].edge[2] = &(obs[14 + 11*(i%5)]);
+        boxes[i].edge[3] = &(obs[8 + 11*(i%5)]);
+    }
+    for(i = 20; i < 25; i ++){
+        if((i%5) == 4){
+            boxes[i].edge[0] = &(obs[4 + 11*(i%5)]); // this is the case for the bottom block
+            boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
+            boxes[i].edge[2] = &(temp); // has been initialized
+            boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
+            boxes[i].no_bottom_wall = 1;
+            break;
+        }
+        else{
+            boxes[i].edge[0] = &(obs[4 + 11*(i%5)]);
+            boxes[i].edge[1] = &(obs[10 + 11*(i%5)]);
+            boxes[i].edge[2] = &(obs[15 + 11*(i%5)]);
+            boxes[i].edge[3] = &(obs[9 + 11*(i%5)]);
+        }
+    }
+    for(i = 25; i < 30; i ++){
+        if((i%5) == 4){
+            boxes[i].edge[0] = &(obs[5 + 11*(i%5)]); // this is the case for the bottom block
+            boxes[i].edge[1] = &(temp);
+            boxes[i].edge[2] = &(temp); // should never be accessed but points to an empty obstacle just in case. NEEDS TO BE INITIALIZED STILL
+            boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
+            boxes[i].no_bottom_wall = 1;
+            boxes[i].no_right_wall = 1;
+            break;
+        }
+        else{
+            boxes[i].edge[0] = &(obs[5 + 11*(i%5)]);
+            boxes[i].edge[1] = &(temp);
+            boxes[i].edge[2] = &(obs[16 + 11*(i%5)]);
+            boxes[i].edge[3] = &(obs[10 + 11*(i%5)]);
+            boxes[i].no_right_wall = 1;
+        }
+    }
     // flag pins
     GPIO_setDir(IMAGE_TO_LINUX_BANK, IMAGE_TO_LINUX_FLAG, GPIO_OUTPUT);
     GPIO_setDir(OPTITRACKDATA_FROM_LINUX_BANK, OPTITRACKDATA_FROM_LINUX_FLAG, GPIO_OUTPUT);
@@ -1115,18 +1220,24 @@ void RobotControl(void) {
     }
 
 
+
     //receive vision data
     if (new_coordata == 1) {
+        new_flag++;
         if (colorstate == 1) {
             blue_center_x = blue_object_x;
             blue_center_y = blue_object_y;
             blue_area = blue_numpels;
-            colorstate = 0;
+            if (!to_blue) {
+                colorstate = 0;
+            }
         }else if (colorstate == 0) {
             orange_center_x = orange_object_x;
             orange_center_y = orange_object_y;
             orange_area = orange_numpels;
-            colorstate = 1;
+            if (!to_orange) {
+                colorstate = 1;
+            }
         }
         new_coordata = 0;
     }
@@ -1280,14 +1391,21 @@ void RobotControl(void) {
             firsttime = 0;
         }
 
+        DutyCycle = enc3/10;
+
         //LCD Printing
         switch((int)(switchstate)) {
         case 0:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),robotstate);
+                LCDPrintfLine(1,"%c %c %c",map[124],map[125],map[126]);
                 LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
             }
             break;
+//            if ((timecount%250)==0){
+//                LCDPrintfLine(1,"Case %d RbSt: %d",(int)(switchstate),robotstate);
+//                LCDPrintfLine(2,"FL: %d FR: %d",minLADARfrontleft,minLADARfrontright);
+//            }
+//            break;
         case 1: // Orange Weed Locator
             if ((timecount%250)==0){
                 LCDPrintfLine(1,"RBST %d",robotstate);
@@ -1338,8 +1456,8 @@ void RobotControl(void) {
             break;
         case 9:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
+                LCDPrintfLine(1,"Enc3: %.1f",DutyCycle);
+                LCDPrintfLine(2,"Case: %d",(int)(switchstate));
             }
             break;
         case 10:
@@ -1350,14 +1468,9 @@ void RobotControl(void) {
             break;
         case 11:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case");
-                LCDPrintfLine(2,"%d",(int)(switchstate));
-            }
-            break;
-        case 12:
-            if ((timecount%250)==0){
-                LCDPrintfLine(1,"RS:%d Bf:%d Of:%d",(int)robotstate, blue_found, orange_found);
-                LCDPrintfLine(2,"%d:Ba:%d %d:Oa:%d", to_blue, blue_area, to_orange, orange_area);
+                LCDPrintfLine(1,"Case %d", (int)(switchstate));
+                ft = (p1*(blue_center_y)*(blue_center_y)*(blue_center_y)) + (p2*(blue_center_y)*(blue_center_y))+(p3*(blue_center_y))+(p4);
+                LCDPrintfLine(2,"%.1f",ft);
             }
             break;
         case 13:
@@ -1368,13 +1481,13 @@ void RobotControl(void) {
             break;
         case 14:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"%d CD:%d Bf:%d", (int)robotstate, WeedCoolDown, orange_found);
+                LCDPrintfLine(1,"%d CD:%d Bf:%d f%d", (int)robotstate, WeedCoolDown, orange_found, new_flag%100);
                 LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_orange, orange_posx, orange_posy, orange_area);
             }
             break;
         case 15:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"%d CD:%d Bf:%d", (int)robotstate, WeedCoolDown, blue_found);
+                LCDPrintfLine(1,"%d CD:%d Bf:%d F%d", (int)robotstate, WeedCoolDown, blue_found, new_flag%100);
                 LCDPrintfLine(2,"%d X:%.1f Y:%.1f A:%d", to_blue, blue_posx, blue_posy, blue_area);
             }
             break;
@@ -1397,14 +1510,14 @@ void RobotControl(void) {
             for(i=0;i<11;i++){
                 xdist[i] = LADARdataX[30 + 17*i];
                 ydist[i] = LADARdataY[30 + 17*i];
-                if(LADARdistance[30 + 17*i] > 1800){
+                if(LADARdistance[30 + 17*i] > 2100){
                     xdist[i] = 170; // guaranteed not to be inside course so value will be ignored
                     ydist[i] = 170;// guaranteed not to be inside course ...
                 }
             }
             for(i=0;i<57;i++){
                 mindist =  100;
-                if(obs[i].found_flag != 1){
+                if((obs[i].found_flag != 1) && (fabs(turn) < 1)){
                     for(j=0;j<11;j++){
                         dist[j] = sqrtf(((xdist[j] - obs[i].x)*(xdist[j] - obs[i].x)) + ((ydist[j] - obs[i].y)*(ydist[j] - obs[i].y)));
                         if(mindist > dist[j]){
@@ -1414,40 +1527,39 @@ void RobotControl(void) {
                     if(mindist < distthresh){
                         obs[i].tally++;
                     }
-                    if((obs[i].tally > 4) && (obs[i].orientation == 1)){
+
+                    if((obs[i].tally > 2) && (obs[i].orientation == 1)){
+                        obs[i].found_flag = 1;
+                        vertical_edge_box_detector(i); // add idx 3 code back to 50 - 55 obstacles
+                        map[0] = '0'; // hard coding errors because i can't figure out why this happens or be bothered.
+                        Semaphore_post(SEM_startAstar);
+                    }
+                    if((obs[i].tally > 2) && (obs[i].orientation == 0) ){
+                        obs[i].found_flag = 1;
                         map[obs[i].idx1] = 'x';
                         map[obs[i].idx2] = 'x';
                         map[obs[i].idx3] = 'x';
-                        obs[i].sendLV = 1;
-                        obs[i].found_flag = 1;
-                        vertical_edge_box_detector(i);
-                        Semaphore_post(SEM_startAstar);
-                    }
-                    if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx1 == 400)){
-                        map[obs[i].idx2] = 'x';
-                        map[obs[i].idx3] = 'x';
-                        obs[i].sendLV = 1;
-                        obs[i].found_flag = 1;
                         horizontal_edge_box_detector(i);
+                        map[0] = '0';
                         Semaphore_post(SEM_startAstar);
                     }
-                    if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx3 == 400)){
-                        map[obs[i].idx1] = 'x';
-                        map[obs[i].idx2] = 'x';
-                        obs[i].sendLV = 1;
-                        obs[i].found_flag = 1;
-                        horizontal_edge_box_detector(i);
-                        Semaphore_post(SEM_startAstar);
-                    }
-                    if((obs[i].tally > 4) && (obs[i].orientation == 0) && !(map[obs[i].idx2] == 'x')){
-                        map[obs[i].idx1] = 'x';
-                        map[obs[i].idx2] = 'x';
-                        map[obs[i].idx3] = 'x';
-                        obs[i].sendLV = 1;
-                        obs[i].found_flag = 1;
-                        horizontal_edge_box_detector(i);
-                        Semaphore_post(SEM_startAstar);
-                    }
+                    //                    if((obs[i].tally > 4) && (obs[i].orientation == 0) && (obs[i].idx3 == 400)){
+                    //                        map[obs[i].idx1] = 'x';
+                    //                        map[obs[i].idx2] = 'x';
+                    //                        obs[i].sendLV = 1;
+                    //                        obs[i].found_flag = 1;
+                    //                        horizontal_edge_box_detector(i);
+                    //                        Semaphore_post(SEM_startAstar);
+                    //                    }
+                    //                    if((obs[i].tally > 4) && (obs[i].orientation == 0) && !(map[obs[i].idx2] == 'x')){
+                    //                        map[obs[i].idx1] = 'x';
+                    //                        map[obs[i].idx2] = 'x';
+                    //                        map[obs[i].idx3] = 'x';
+                    //                        obs[i].sendLV = 1;
+                    //                        obs[i].found_flag = 1;
+                    //                        horizontal_edge_box_detector(i);
+                    //                        Semaphore_post(SEM_startAstar);
+                    //                    }
                 }
             }
         }
@@ -1494,7 +1606,7 @@ void RobotControl(void) {
                 to_orange = 1;
                 robotstate = 7;
                 break;
-            }else if( xy_control(&vref, &turn, 5.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
+            }else if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     statePos = (statePos+1)%robotdestSize;
@@ -1524,12 +1636,18 @@ void RobotControl(void) {
             colorerror = 0-blue_center_x;
             turn = KpLight*colorerror;
             vref = 0.1;
-            DeathSpin++;
-            if (DeathSpin>1000){
-                DeathSpin = 0;
+//            DeathSpin++;
+            if (blue_area < 20) {
                 robotstate = 2;
-                to_blue=0;
+                WeedCoolDown = 500;
+                to_blue = 0;
                 break;
+//            }
+//            if (DeathSpin>1000){
+//                DeathSpin = 0;
+//                robotstate = 2;
+//                to_blue=0;
+//                break;
             }else{
                 if (abs(blue_center_x)<5){
                     WeedCoolDown = 2000;
@@ -1546,6 +1664,7 @@ void RobotControl(void) {
                         // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
                         sharedbluex = blue_posx;
                         sharedbluey = blue_posy;
+                        DutyCycleBlue = PWMpos[blue_found];
                         newWeed = 1;
                     }else{
                         to_blue = 0;
@@ -1557,7 +1676,7 @@ void RobotControl(void) {
             break;
 
         case 6:// move to x,y Blue Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.5)){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.01, 0.5)){
                 robotstate = 3;//wait for 1 s
             }
             break;
@@ -1565,12 +1684,17 @@ void RobotControl(void) {
         case 7://turning to face orange straight ahead
             colorerror = 0-orange_center_x;
             turn = KpLight*colorerror;
-            DeathSpin++;
-            if (DeathSpin>1000){
-                DeathSpin = 0;
-                to_orange = 0;
+//            DeathSpin++;
+            if (orange_area < 20) {
                 robotstate = 2;
+                WeedCoolDown = 500;
+                to_orange = 0;
                 break;
+//            if (DeathSpin>1000){
+//                DeathSpin = 0;
+//                to_orange = 0;
+//                robotstate = 2;
+//                break;
             }else{
                 if (abs(orange_center_x)<5){
                     WeedCoolDown = 2000;
@@ -1587,6 +1711,7 @@ void RobotControl(void) {
                         // *****DO THIS FOR ORANGE ALSO, FLAG LABVIEW**** - sharedorange x & y is already declared, Labview side is ready
                         sharedorangex = orange_posx;
                         sharedorangey = orange_posy;
+                        DutyCycleOrange = PWMpos[orange_found];
                         newWeed = 1;
                     }else{
                         to_orange = 0;
@@ -1598,7 +1723,7 @@ void RobotControl(void) {
             break;
 
         case 8:// move to x,y Orange Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.5) && to_orange == 1){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.01, 0.5) && to_orange == 1){
                 robotstate = 3;//wait for 1 s
             }
 
@@ -1686,7 +1811,9 @@ void RobotControl(void) {
             turn = 0;
         }
 
-        SetRobotOutputs(vref,turn,0,0,0,0,0,0,0,0);
+
+
+        SetRobotOutputs(vref,turn,DutyCycleBlue,DutyCycleOrange,DutyCycle,0,0,0,0,0);
 
         timecount++;
     }
@@ -1794,196 +1921,92 @@ pose UpdateOptitrackStates(pose localROBOTps, int * flag) {
     }
     return localOPTITRACKps;
 }
-void horizontal_edge_box_detector(int i){
+void horizontal_edge_box_detector(i){
     int index;
-    int j;
     index = i;
+    int j;
     if(ROBOTps.y > obs[index].y){
-        for(i = 0; i < 30; i ++){
+        for(i = 0; i < 30; i++){
             if((boxes[i].edge[0]->x == obs[index].x) && (boxes[i].edge[0]->y == obs[index].y)){
-                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
-                    for(j = 0; j < 4; j ++){
-                        map[boxes[i].edge[j]->idx1] = 'x';
-                        map[boxes[i].edge[j]->idx2] = 'x';
-                        map[boxes[i].edge[j]->idx3] = 'x';
+                if((i == 6) || (i == 21)){
+                    continue; // this is to skip the keypoint blocks
+                }
+                for(j = 0; j < 4; j ++){
+                    map[boxes[i].edge[j]->idx1] = 'x';
+                    map[boxes[i].edge[j]->idx2] = 'x';
+                    map[boxes[i].edge[j]->idx3] = 'x';
+                    if(boxes[i].edge[j]->temp_flag == 0){
                         boxes[i].edge[j]->sendLV = 1;
                         boxes[i].edge[j]->found_flag = 1;
                     }
                 }
-                else if(boxes[i].no_left_wall == 1){
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[1]->idx1] = 'x';
-                    map[boxes[i].edge[1]->idx2] = 'x';
-                    map[boxes[i].edge[1]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[1]->sendLV = 1;
-                    boxes[i].edge[1]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                }
-                else{
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[3]->idx1] = 'x';
-                    map[boxes[i].edge[3]->idx2] = 'x';
-                    map[boxes[i].edge[3]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                    boxes[i].edge[3]->sendLV = 1;
-                    boxes[i].edge[3]->found_flag = 1;
-                }
-                break;
+                return;
             }
         }
     }
+
     if(ROBOTps.y < obs[index].y){
         for(i = 0; i < 30; i ++){
             if((boxes[i].edge[2]->x == obs[index].x) && (boxes[i].edge[2]->y == obs[index].y)){
-                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
-                    for(j = 0; j < 4; j ++){
-                        map[boxes[i].edge[j]->idx1] = 'x';
-                        map[boxes[i].edge[j]->idx2] = 'x';
-                        map[boxes[i].edge[j]->idx3] = 'x';
+                if((i == 6) || (i == 21)){
+                    continue; // this is to skip the keypoint blocks
+                }
+                for(j = 0; j < 4; j ++){
+                    map[boxes[i].edge[j]->idx1] = 'x';
+                    map[boxes[i].edge[j]->idx2] = 'x';
+                    map[boxes[i].edge[j]->idx3] = 'x';
+                    if(boxes[i].edge[j]->temp_flag == 0){
                         boxes[i].edge[j]->sendLV = 1;
                         boxes[i].edge[j]->found_flag = 1;
                     }
+
                 }
-                else if(boxes[i].no_left_wall == 1){
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[1]->idx1] = 'x';
-                    map[boxes[i].edge[1]->idx2] = 'x';
-                    map[boxes[i].edge[1]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[1]->sendLV = 1;
-                    boxes[i].edge[1]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                }
-                else{
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[3]->idx1] = 'x';
-                    map[boxes[i].edge[3]->idx2] = 'x';
-                    map[boxes[i].edge[3]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                    boxes[i].edge[3]->sendLV = 1;
-                    boxes[i].edge[3]->found_flag = 1;
-                }
-                break;
+                return; // ask dan/ayush if this is good to speed up runtime
             }
         }
     }
 }
-void vertical_edge_box_detector(int i){
+void vertical_edge_box_detector(i){
     int index;
     index = i;
     int j;
     if(ROBOTps.x > obs[index].x){
-        for(i = 0; i < 30; i ++){
+        for(i = 0; i < 25; i ++){
             if((boxes[i].edge[1]->x == obs[index].x) && (boxes[i].edge[1]->y == obs[index].y)){
-                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
-                    for(j = 0; j < 4; j ++){
-                        map[boxes[i].edge[j]->idx1] = 'x';
-                        map[boxes[i].edge[j]->idx2] = 'x';
-                        map[boxes[i].edge[j]->idx3] = 'x';
+                if((i == 6) || (i == 21)){
+                    continue; // this is to skip the keypoint blocks
+                }
+                for(j = 0; j < 4; j ++){
+                    map[boxes[i].edge[j]->idx1] = 'x';
+                    map[boxes[i].edge[j]->idx2] = 'x';
+                    map[boxes[i].edge[j]->idx3] = 'x';
+                    if(boxes[i].edge[j]->temp_flag == 0){
                         boxes[i].edge[j]->sendLV = 1;
                         boxes[i].edge[j]->found_flag = 1;
                     }
                 }
-                else if(boxes[i].no_left_wall == 1){
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[1]->idx1] = 'x';
-                    map[boxes[i].edge[1]->idx2] = 'x';
-                    map[boxes[i].edge[1]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[1]->sendLV = 1;
-                    boxes[i].edge[1]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                }
-                else{
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[3]->idx1] = 'x';
-                    map[boxes[i].edge[3]->idx2] = 'x';
-                    map[boxes[i].edge[3]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                    boxes[i].edge[3]->sendLV = 1;
-                    boxes[i].edge[3]->found_flag = 1;
-                }
-                break;
+                return; // ask dan/ayush if this is good to speed up runtime
             }
+
         }
     }
-    if(ROBOTps.x > obs[index].x){
-        for(i = 0; i < 30; i ++){
+    if(ROBOTps.x < obs[index].x){
+        for(i = 5; i < 30; i ++){
             if((boxes[i].edge[3]->x == obs[index].x) && (boxes[i].edge[3]->y == obs[index].y)){
-                if((!(boxes[i].no_left_wall)) && (!(boxes[i].no_right_wall))){
-                    for(j = 0; j < 4; j ++){
-                        map[boxes[i].edge[j]->idx1] = 'x';
-                        map[boxes[i].edge[j]->idx2] = 'x';
-                        map[boxes[i].edge[j]->idx3] = 'x';
+                if((i == 6) || (i == 21)){
+                    continue; // this is to skip the keypoint blocks
+                }
+                for(j = 0; j < 4; j ++){
+                    map[boxes[i].edge[j]->idx1] = 'x';
+                    map[boxes[i].edge[j]->idx2] = 'x';
+                    map[boxes[i].edge[j]->idx3] = 'x';
+                    if(boxes[i].edge[j]->temp_flag == 0){
                         boxes[i].edge[j]->sendLV = 1;
                         boxes[i].edge[j]->found_flag = 1;
                     }
                 }
-                else if(boxes[i].no_left_wall == 1){
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[1]->idx1] = 'x';
-                    map[boxes[i].edge[1]->idx2] = 'x';
-                    map[boxes[i].edge[1]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[1]->sendLV = 1;
-                    boxes[i].edge[1]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                }
-                else{
-                    map[boxes[i].edge[0]->idx2] = 'x';
-                    map[boxes[i].edge[0]->idx3] = 'x';
-                    map[boxes[i].edge[3]->idx1] = 'x';
-                    map[boxes[i].edge[3]->idx2] = 'x';
-                    map[boxes[i].edge[3]->idx3] = 'x';
-                    map[boxes[i].edge[2]->idx2] = 'x';
-                    map[boxes[i].edge[2]->idx3] = 'x';
-                    boxes[i].edge[0]->sendLV = 1;
-                    boxes[i].edge[0]->found_flag = 1;
-                    boxes[i].edge[2]->sendLV = 1;
-                    boxes[i].edge[2]->found_flag = 1;
-                    boxes[i].edge[3]->sendLV = 1;
-                    boxes[i].edge[3]->found_flag = 1;
-                }
-                break;
+                return; // ask dan/ayush if this is good to speed up runtime
+
             }
         }
     }

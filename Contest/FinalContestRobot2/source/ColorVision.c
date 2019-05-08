@@ -91,6 +91,8 @@ volatile int new_num_found_objects = 0;
 volatile float   new_object_theta 	= 0.0;
 volatile float   new_C20				= 0.0;
 volatile float   new_C02				= 0.0;
+extern int to_blue;
+extern int to_orange;
 
 
 int k;
@@ -570,6 +572,15 @@ void userProcessColorImageFunc_laser(bgr *ptrImage) {
                 //new_object_theta = 0.0;
                 //new_C20 = 0.0;
                 //new_C02 = 0.0;
+                if (colorstate == 0){
+                    orange_object_x = object_x;
+                    orange_object_y = object_y;
+                    orange_numpels = numpels;
+                }else if (colorstate == 1){
+                    blue_object_x = object_x;
+                    blue_object_y = object_y;
+                    blue_numpels = numpels;
+                }
                 new_coordata = 1;
             }
         }
