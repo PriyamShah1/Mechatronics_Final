@@ -157,8 +157,8 @@ float gyro4x_gain = 1;
 extern float mydist;
 
 int statePos = 1;   // index into robotdest
-int robotdestSize = 13;  // number of positions to use out of robotdest
-pose robotdest[13];  // array of waypoints for the robot
+int robotdestSize = 14;  // number of positions to use out of robotdest
+pose robotdest[25];  // array of waypoints for the robot
 pose dest_mem;
 
 extern float newLADARdistance[LADAR_MAX_DATA_SIZE];  //in mm
@@ -298,6 +298,7 @@ extern int colorstate;
 int orange_found = 0;
 int blue_found = 0;
 int spraying = 0;
+int reporting = 0;
 extern float orange_object_x;
 extern float orange_object_y;
 extern int orange_numpels;
@@ -310,6 +311,7 @@ int blue_center_x = 0;
 int blue_center_y = 0;
 int blue_area = 0;
 int i = 0;
+
 
 float orange_center_x = 0;
 float orange_center_y = 0;
@@ -350,6 +352,10 @@ float DutyCycleBlue = 3.0;
 float DutyCycleOrange = 3.0;
 float PWMpos[6] = {3.82, 6.22, 9.0, 12.6, 12.6, 12.6};
 float DutyCycle = 0.0;
+int playing = 0;
+
+int playflag =0 ;
+float whattoplay = 0;
 
 char map[176] =         //16x11
 {   '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -649,24 +655,24 @@ void ComWithLinux(void) {
         }
 
         if (GET_DATAFORFILE_TO_LINUX) {
-            // First make sure all scratch elements are zero
-            for (i=0;i<500;i++) {
-                ptrshrdmem->scratch[i] = 0;
-            }
-            // Write LADARdataX to scratch
-            for (i=0;i<228;i++) {
-                ptrshrdmem->scratch[i] = LADARdataX[i];
-            }
-            // Write LADARdataY to scratch
-            for (i=0;i<228;i++) {
-                ptrshrdmem->scratch[228+i] = LADARdataY[i];
-            }
-            // Flush or write back source
-            Cache_wb((void *)ptrshrdmem,sizeof(sharedmemstruct), Cache_Type_ALL, EDMA3_CACHE_WAIT);
 
-            CLR_DATAFORFILE_TO_LINUX;
+            // This is an example write to scratch
+            // The Linux program SaveScratchToFile can be used to write the
+            // ptrshrdmem->scratch[0-499] memory to a .txt file.
+//          for (i=100;i<300;i++) {
+//              ptrshrdmem->scratch[i] = (float)i;
+//          }
+
+            if (playflag == 1) {
+                ptrshrdmem->scratch[0] = whattoplay;
+                // Flush or write back source
+                Cache_wb((void *)ptrshrdmem,sizeof(sharedmemstruct), Cache_Type_ALL, EDMA3_CACHE_WAIT);
+                //BCACHE_wb((void *)ptrshrdmem,sizeof(sharedmemstruct),EDMA3_CACHE_WAIT);
+                playflag = 0;
+                CLR_DATAFORFILE_TO_LINUX;
+            }
+
         }
-
 
         tskcount++;
         Task_sleep(40);
@@ -809,13 +815,14 @@ Int main()
     robotdest[3].x = 0;     robotdest[3].y = -2;
     robotdest[4].x = 3;    robotdest[4].y = 7;
     robotdest[5].x = -3;     robotdest[5].y = 7;
-    robotdest[6].x = 0;     robotdest[6].y = -1;
+    robotdest[6].x = 0;     robotdest[6].y = -2;
     robotdest[7].x = 5;    robotdest[7].y = -3;
     robotdest[8].x = 0;     robotdest[8].y = -2;
     robotdest[9].x = 0;     robotdest[9].y = 11;
-    robotdest[10].x = 0;    robotdest[10].y = -1;
+    robotdest[10].x = 0;    robotdest[10].y = -2;
     robotdest[11].x = -2;    robotdest[11].y = -4;
     robotdest[12].x = 2;    robotdest[12].y = -4;
+    robotdest[13].x = 0;    robotdest[13].y = -2;
 //    robotdest[6].x = -5;     robotdest[6].y = 9;
 //    robotdest[7].x = 5;    robotdest[7].y = 9;
     //    //middle of bottom
@@ -1068,6 +1075,7 @@ Int main()
     temp.idx1 = 131;
     temp.idx2 = 131;
     temp.idx3 = 131;
+
     for(i = 0; i < 30; i ++){
         boxes[i].no_left_wall = 0; // here are our initializations for each box
         boxes[i].no_right_wall = 0;
@@ -1508,7 +1516,7 @@ void RobotControl(void) {
 
 
         int j;
-        if (newLADARdata == 1) {
+        if ((newLADARdata == 1)) {
             newLADARdata = 0;
             for (i=0;i<228;i++) {
                 LADARdistance[i] = newLADARdistance[i];
@@ -1616,8 +1624,8 @@ void RobotControl(void) {
                 to_orange = 1;
                 robotstate = 7;
                 break;
-            }else if( (robotdest[statePos-1].y >= -1.0) && (robotdest[statePos].y >= -1.0) ){
-                if (xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)) {
+            }else if( (robotdest[statePos-1].y >= -2.0) && (robotdest[statePos].y >= -2.0) ){
+                if (xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 2)) {
                     pathPos++;
                     if (pathPos == pathLen) {
                         statePos = (statePos+1)%robotdestSize;
@@ -1631,6 +1639,23 @@ void RobotControl(void) {
             } else if  ( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5, 4.0)) {
                 statePos = (statePos+1)%robotdestSize;
                 Semaphore_post(SEM_startAstar);
+                if (statePos == 12){
+                    robotstate = 12;
+                }
+                if (statePos == 13){
+                    robotstate = 12;
+                }
+            }
+            break;
+
+        case 12:
+            vref = 0;
+            turn = 0;
+            if(reporting <2000){
+                reporting++;
+            }else{
+                reporting = 0;
+                robotstate = 2;
             }
             break;
 
@@ -1639,11 +1664,17 @@ void RobotControl(void) {
             turn = 0;
             to_blue = 0;
             to_orange = 0;
+            if (playflag == 0 && playing == 0) {
+                playflag = 1;
+                playing = 1;
+                whattoplay = 2.0;
+            }
             if(spraying<1000){
                 spraying ++;
             }else{
                 spraying = 0;
                 robotstate = 2;
+                playing = 0;
                 Semaphore_post(SEM_startAstar);
                 //done spraying, going to next setpoint
             }
@@ -1699,7 +1730,7 @@ void RobotControl(void) {
             break;
 
         case 6:// move to x,y Blue Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 2)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     //                                statePos = (statePos+1)%robotdestSize;
@@ -1716,7 +1747,7 @@ void RobotControl(void) {
 
             break;
         case 9:
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.25, 1.5) && to_blue == 1){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.25, 2) && to_blue == 1){
                 robotstate = 3;//wait for 1 s
             }
             break;
@@ -1768,7 +1799,7 @@ void RobotControl(void) {
             break;
 
         case 8:// move to x,y Orange Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 2)){
                 pathPos++;
                 if (pathPos == pathLen) {
                     //                                statePos = (statePos+1)%robotdestSize;
@@ -1786,7 +1817,7 @@ void RobotControl(void) {
             break;
 
         case 10:
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.25, 1.5) && to_orange == 1){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.25, 2) && to_orange == 1){
                 robotstate = 3;//wait for 1 s
             }
             break;
@@ -1871,6 +1902,12 @@ void RobotControl(void) {
             turn = 0;
         }
 
+//        if (timecount%5000 == 0) {
+//            if (playflag == 0) {
+//                playflag = 1;
+//                whattoplay = 2.0;
+//            }
+//        }
 
 
         SetRobotOutputs(vref,turn,DutyCycleBlue,DutyCycleOrange,DutyCycle,0,0,0,0,0);
@@ -2000,6 +2037,7 @@ void horizontal_edge_box_detector(i){
                         boxes[i].edge[j]->found_flag = 1;
                     }
                 }
+                ;
                 return;
             }
         }
@@ -2019,8 +2057,8 @@ void horizontal_edge_box_detector(i){
                         boxes[i].edge[j]->sendLV = 1;
                         boxes[i].edge[j]->found_flag = 1;
                     }
-
                 }
+
                 return; // ask dan/ayush if this is good to speed up runtime
             }
         }

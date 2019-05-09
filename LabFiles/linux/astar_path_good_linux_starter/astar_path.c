@@ -301,7 +301,7 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 			/*neighbor.totalDist (f) = neighbor.distTravelFromStart + neighbor.distToGoal
 				(total estimated distance as sum of distance traveled from start and distance to goal)*/
 			// 8.  Find f, (totalDist) for this neighbor
-			next.totalDist = next.distToGoal + next.distTravelFromStart;
+			next.totalDist = next.distTravelFromStart + next.distToGoal;
 			
 			
 			// 9.  Just comments for this question.
@@ -381,11 +381,11 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 				{
 					for(j = 0; j<mapColSize; j++) {
 						map[i*mapColSize+j] = myshared->sharedAstarMap[i*mapColSize+j];
-						printf("%c ", map[i*mapColSize+j]);
+						//printf("%c ", map[i*mapColSize+j]);
 					}
-					printf("\n");
+					//printf("\n");
 				}
-				printf("\n");
+				//printf("\n");
 				if(startRow>=0 && startRow<mapRowSize && startCol>=0 && startCol<mapColSize && endRow>=0 && endRow<mapRowSize && endCol>=0 && endCol<mapColSize)		//if in bounds{
 				{
 					if(map[startRow*mapColSize+startCol]!='x' && map[endRow*mapColSize+endCol]!='x')		//make sure valid start and end points
@@ -393,7 +393,7 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 						astarfoundpath = astar(startRow,startCol,endRow,endCol);		//solve
 						if (astarfoundpath == 1) {
 							myshared->sharedPathLen = pathLen;
-							printf("pathLen %d\n", myshared->sharedPathLen);
+							// printf("pathLen %d\n", myshared->sharedPathLen);
 							for(i = 0; i < pathLen; i++)		//put solution on map
 							{
 								int mapIdx = pathRow[i]*mapColSize + pathCol[i];
@@ -401,9 +401,10 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 								myshared->sharedPathRow[i]=pathRow[i]; //we added these lines after discussion with michal
 								myshared->sharedPathCol[i]=pathCol[i];
 								
-								printf("%d, %d; %d, %d \n", pathRow[i], pathCol[i], (11-pathRow[i]), (pathCol[i]-5) );		//Print Astar coordinates, Robot coordinates
+								// printf("%d, %d; %d, %d \n", pathRow[i], pathCol[i], (11-pathRow[i]), (pathCol[i]-5) );		//Print Astar coordinates, Robot coordinates
 							}	
 						
+							// printf("Call Count %3d\n", myAstarCount++);
 							//print map with solution
 							for(i=0; i<mapRowSize; i++)
 							{
@@ -414,20 +415,13 @@ int runAstar(int startRow, int startCol, int endRow, int endCol)
 								printf("\n");
 							}
 							return 1;
-						} else if (astarfoundpath == 2) {
+						} else if(astarfoundpath == 2){
 							myshared->sharedPathLen = 1;
-							myshared->sharedPathRow[0]=endRow; 
-							myshared->sharedPathCol[0]=endCol;
-							printf("\n");
-							printf("\n");
-							printf("\n");
-							printf("No Astar Run because start Position same as end position.\n");
-							printf("\n");
-							printf("\n");
-							printf("\n");
-							
-							return 1;
-						} else {
+							myshared->sharedPathRow[0] = endRow; //we added these lines after discussion with michal
+							myshared->sharedPathCol[0] = endCol;
+							return 1; // Astar did not fail
+						}
+						else {
 							printf("\n\n\nNo Path Found\n\n\n");
 							return 0;
 						}
@@ -588,3 +582,4 @@ void gs_killapp(int s)
 	close(gs_coms_skt);
 	return;
 }
+

@@ -327,35 +327,38 @@ int astar(int rowStart, int colStart, int rowEnd, int colEnd)
 				coordinate = minDistNode.row * mapColSize + minDistNode.col;
 				next_coordinate = next.row * mapColSize + next.col;
 				if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row < minDistNode.row))){
-						if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate - 11])){
-							next.distTravelFromStart = currdist + 2500;
-							// free(next); // delete this node from memory
-							// continue;
-						}
-					}
-				}
-				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row < minDistNode.row))){
-						if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate - 11])){
-							next.distTravelFromStart = currdist + 2500;
-							// free(next); 
-							// continue; // delete this node from memory
-						}
-					}
-				}
-				else if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row > minDistNode.row))){
-					if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate + 11])){
-						next.distTravelFromStart = currdist + 2500;
+					if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate - 11])){
+						continue;
+						//next.distTravelFromStart = currdist + 2500;
 						// free(next); // delete this node from memory
 						// continue;
-						}
 					}
 				}
-				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row > minDistNode.row))){
-					if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate + 11])){
-						next.distTravelFromStart = currdist + 2500;
+				
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row < minDistNode.row))){
+					if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate - 11])){
+						continue;
+						// next.distTravelFromStart = currdist + 2500;
 						// free(next); 
 						// continue; // delete this node from memory
-						}
+					}
+				}
+			
+				else if((!(map[next_coordinate] == 'x')) && ((next.col > minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate + 1]) || canTravel(map[coordinate + 11])){
+						continue;
+						// next.distTravelFromStart = currdist + 2500;
+						// free(next); // delete this node from memory
+						// continue;
+					}
+				}
+					
+				else if((!(map[next_coordinate] == 'x')) && ((next.col < minDistNode.col) || (next.row > minDistNode.row))){
+					if(canTravel(map[coordinate - 1]) || canTravel(map[coordinate + 11])){
+						continue;
+						// next.distTravelFromStart = currdist + 2500;
+						// free(next); 
+						// continue; // delete this node from memory
 					}
 				}
 				else{

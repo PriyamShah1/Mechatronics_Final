@@ -109,7 +109,7 @@ int xy_control(float *vref_forxy, float *turn_forxy,float turn_thres, float x_po
 	}
 
 	// vref is 1 tile/sec; but slower when close to target.  
-	*vref_forxy = speed*dir*MIN(1.2*dist,1); // *vref_forxy = dir*1.2*dist;
+	*vref_forxy = speed*dir*MIN(dist,1); // *vref_forxy = dir*1.2*dist;
 
     if (fabsf(*vref_forxy) > 0.0) {
         // if robot 1 tile away from target use a scaled KP value.  
