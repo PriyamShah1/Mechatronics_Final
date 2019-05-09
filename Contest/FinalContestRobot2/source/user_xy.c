@@ -58,7 +58,7 @@ float my_atanf(float dy, float dx)
 	return ang;
 }
 
-int xy_control(float *vref_forxy, float *turn_forxy,float turn_thres, float x_pos,float y_pos,float x_desired,float y_desired,float thetaabs,float target_radius,float target_radius_near)
+int xy_control(float *vref_forxy, float *turn_forxy,float turn_thres, float x_pos,float y_pos,float x_desired,float y_desired,float thetaabs,float target_radius,float target_radius_near, float speed)
 {
 	float dx,dy,alpha;
 	float dist = 0.0F;
@@ -109,14 +109,14 @@ int xy_control(float *vref_forxy, float *turn_forxy,float turn_thres, float x_po
 	}
 
 	// vref is 1 tile/sec; but slower when close to target.  
-	*vref_forxy = dir*MIN(1.2*dist,1); // *vref_forxy = dir*1.2*dist;
+	*vref_forxy = speed*dir*MIN(1.2*dist,1); // *vref_forxy = dir*1.2*dist;
 
     if (fabsf(*vref_forxy) > 0.0) {
         // if robot 1 tile away from target use a scaled KP value.  
-        *turn_forxy = (*vref_forxy*2)*turnerror;
+        *turn_forxy = (*vref_forxy*4)*turnerror;
     } else {
         // normally use a Kp gain of 2
-        *turn_forxy = 2*turnerror;
+        *turn_forxy = 4*turnerror;
     }
     
     // This helps with unbalanced wheel slipping.  If turn value greater than turn_thres (I use 2) then just spin in place

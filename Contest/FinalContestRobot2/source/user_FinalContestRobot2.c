@@ -156,9 +156,10 @@ float gyro_x = 0,gyro_y = 0;
 float gyro4x_gain = 1;
 extern float mydist;
 
-int statePos = 0;   // index into robotdest
-int robotdestSize = 9;  // number of positions to use out of robotdest
-pose robotdest[9];  // array of waypoints for the robot
+int statePos = 1;   // index into robotdest
+int robotdestSize = 13;  // number of positions to use out of robotdest
+pose robotdest[13];  // array of waypoints for the robot
+pose dest_mem;
 
 extern float newLADARdistance[LADAR_MAX_DATA_SIZE];  //in mm
 extern float newLADARangle[LADAR_MAX_DATA_SIZE];        // in degrees
@@ -247,13 +248,19 @@ float KpGyro = 400;
 //send obstacle x,y,orientation to labview
 float data1 = 0.0;
 float data2 = 0.0;
-float data3 = 0.0;
+float data3 = 14.0;
 //send blue weed x,y
 float data4 = 0.0;
 float data5 = 14.0;
 //send orange weed x,y
 float data6 = 0.0;
 float data7 = 14.0;
+float data8 = 0.0;
+float data9 = 14.0;
+float data10 = 0.0;
+float data11 = 14.0;
+float data12 = 0.0;
+float data13 = 14.0;
 float newWeed = 0.0; // New Weed flag
 
 float p1_old = 0;
@@ -796,15 +803,19 @@ Int main()
     x_pred[2][0] = ROBOTps.theta;
 
     // TODO: defined destinations that moves the robot around and outside the course
-    robotdest[0].x = 0;     robotdest[0].y = -1;
-    robotdest[1].x = -5;     robotdest[1].y = -3;
-    robotdest[2].x = 3;    robotdest[2].y = 7;
-    robotdest[3].x = -3;     robotdest[3].y = 7;
-    robotdest[4].x = 5;    robotdest[4].y = -3;
-    robotdest[5].x = 0;     robotdest[5].y = 11;
-    robotdest[6].x = 0;    robotdest[6].y = -1;
-    robotdest[7].x = -2;    robotdest[7].y = -4;
-    robotdest[8].x = 2;    robotdest[8].y = -4;
+    robotdest[0].x = 0;     robotdest[0].y = 0;
+    robotdest[1].x = 0;     robotdest[1].y = -1;
+    robotdest[2].x = -5;     robotdest[2].y = -3;
+    robotdest[3].x = 0;     robotdest[3].y = -2;
+    robotdest[4].x = 3;    robotdest[4].y = 7;
+    robotdest[5].x = -3;     robotdest[5].y = 7;
+    robotdest[6].x = 0;     robotdest[6].y = -1;
+    robotdest[7].x = 5;    robotdest[7].y = -3;
+    robotdest[8].x = 0;     robotdest[8].y = -2;
+    robotdest[9].x = 0;     robotdest[9].y = 11;
+    robotdest[10].x = 0;    robotdest[10].y = -1;
+    robotdest[11].x = -2;    robotdest[11].y = -4;
+    robotdest[12].x = 2;    robotdest[12].y = -4;
 //    robotdest[6].x = -5;     robotdest[6].y = 9;
 //    robotdest[7].x = 5;    robotdest[7].y = 9;
     //    //middle of bottom
@@ -1414,7 +1425,7 @@ void RobotControl(void) {
             break;
         case 2:
             if ((timecount%250)==0){
-                LCDPrintfLine(1,"Case %d",(int)robotstate);
+                LCDPrintfLine(1,"%d Ox:%.1f Oy:%.1f",robotstate, orange_posx,orange_posy);
                 LCDPrintfLine(2,"x: %.1f y: %.1f",robotdest[statePos].x,robotdest[statePos].y);
             }
             break;
@@ -1569,7 +1580,6 @@ void RobotControl(void) {
         //        float dx;
         //        float dy;
         //        float dist = 0.0F;
-        //        float dx_prev;
         //        float dy_prev;
         //        float prev_dist = 0.0F;
         //        int prevstatePos = 0;
@@ -1584,12 +1594,12 @@ void RobotControl(void) {
         //            prev_dist = sqrtf(dx_prev*dx_prev + dy_prev*dy_prev);
         //        }
 
-        //        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
+        //        if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5, 1.0))
         //        { statePos = (statePos+1)%robotdestSize; }
 
         switch(robotstate){
         //        case 1:
-        //            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5))
+        //            if( xy_control(&vref, &turn, 3.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5, 1.0))
         //            { statePos = (statePos+1)%robotdestSize; }
         //            if(ROBOTps.y >= 0){
         //                robotstate = 2;
@@ -1606,16 +1616,21 @@ void RobotControl(void) {
                 to_orange = 1;
                 robotstate = 7;
                 break;
-            }else if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5)){
-                pathPos++;
-                if (pathPos == pathLen) {
-                    statePos = (statePos+1)%robotdestSize;
-                    Semaphore_post(SEM_startAstar);
+            }else if( (robotdest[statePos-1].y >= -1.0) && (robotdest[statePos].y >= -1.0) ){
+                if (xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)) {
+                    pathPos++;
+                    if (pathPos == pathLen) {
+                        statePos = (statePos+1)%robotdestSize;
+                        Semaphore_post(SEM_startAstar);
+                    }
                 }
                 //                if(ROBOTps.y < 0){
                 //                    robotstate = 1;
                 //                }
 
+            } else if  ( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, robotdest[statePos].x, robotdest[statePos].y, ROBOTps.theta, 0.25, 0.5, 4.0)) {
+                statePos = (statePos+1)%robotdestSize;
+                Semaphore_post(SEM_startAstar);
             }
             break;
 
@@ -1628,7 +1643,9 @@ void RobotControl(void) {
                 spraying ++;
             }else{
                 spraying = 0;
-                robotstate = 2;//done spraying, going to next setpoint
+                robotstate = 2;
+                Semaphore_post(SEM_startAstar);
+                //done spraying, going to next setpoint
             }
             break;
 
@@ -1666,6 +1683,12 @@ void RobotControl(void) {
                         sharedbluey = blue_posy;
                         DutyCycleBlue = PWMpos[blue_found];
                         newWeed = 1;
+                        dest_mem.x = robotdest[statePos].x;
+                        dest_mem.y = robotdest[statePos].y;
+                        robotdest[statePos].x = blue_posx;
+                        robotdest[statePos].y = blue_posy;
+                        Semaphore_post(SEM_startAstar);
+
                     }else{
                         to_blue = 0;
                         robotstate = 2;
@@ -1676,7 +1699,24 @@ void RobotControl(void) {
             break;
 
         case 6:// move to x,y Blue Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.01, 0.5)){
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)){
+                pathPos++;
+                if (pathPos == pathLen) {
+                    //                                statePos = (statePos+1)%robotdestSize;
+                    robotdest[statePos].x = dest_mem.x;
+                    robotdest[statePos].y = dest_mem.y;
+                    robotstate = 9;
+                    //Semaphore_post(SEM_startAstar);
+                }
+            }
+
+//            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.01, 0.5, 1.0)){
+//                robotstate = 3;//wait for 1 s
+//            }
+
+            break;
+        case 9:
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, blue_posx, blue_posy, ROBOTps.theta, 0.25, 0.25, 1.5) && to_blue == 1){
                 robotstate = 3;//wait for 1 s
             }
             break;
@@ -1713,6 +1753,11 @@ void RobotControl(void) {
                         sharedorangey = orange_posy;
                         DutyCycleOrange = PWMpos[orange_found];
                         newWeed = 1;
+                        dest_mem.x = robotdest[statePos].x;
+                        dest_mem.y = robotdest[statePos].y;
+                        robotdest[statePos].x = orange_posx;
+                        robotdest[statePos].y = orange_posy;
+                        Semaphore_post(SEM_startAstar);
                     }else{
                         to_orange = 0;
                         robotstate = 2;
@@ -1723,13 +1768,28 @@ void RobotControl(void) {
             break;
 
         case 8:// move to x,y Orange Weed assuming no obstacle
-            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.01, 0.5) && to_orange == 1){
-                robotstate = 3;//wait for 1 s
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, pathCol[pathPos], pathRow[pathPos], ROBOTps.theta, 0.25, 0.5, 1.5)){
+                pathPos++;
+                if (pathPos == pathLen) {
+                    //                                statePos = (statePos+1)%robotdestSize;
+                    robotdest[statePos].x = dest_mem.x;
+                    robotdest[statePos].y = dest_mem.y;
+                    robotstate = 10;
+                    //Semaphore_post(SEM_startAstar);
+                }
             }
+//            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.01, 0.5, 1.0) && to_orange == 1){
+//                robotstate = 3;//wait for 1 s
+//            }
 
 
             break;
 
+        case 10:
+            if( xy_control(&vref, &turn, 1.0, ROBOTps.x, ROBOTps.y, orange_posx, orange_posy, ROBOTps.theta, 0.25, 0.25, 1.5) && to_orange == 1){
+                robotstate = 3;//wait for 1 s
+            }
+            break;
 
         }
 
