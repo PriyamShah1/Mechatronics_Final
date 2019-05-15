@@ -4,4 +4,4 @@ If you would like to see the code for the obstacle detection/map building/weed d
 \Contest\FinalContestRobot2\source\user_FinalContestRobot2.c                                      
 If you would like to see the diagonal Astar code                                            
 \labfiles\linux\Diagonal_Astar\astar_path.c                                                 
-Check out our website detailing the project here:                                                         
+Check out our website detailing the project here: https://www.youtube.com/watch?v=faxWsOvBNKc                                                      
